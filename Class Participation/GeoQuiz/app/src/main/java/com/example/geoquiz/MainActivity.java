@@ -46,10 +46,20 @@ public class MainActivity extends AppCompatActivity {
         mTrueButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int rnd = new Random().nextInt(mQuestionBank.length);
-                int id = mQuestionBank[rnd].getmTextResId();
-                boolean truth = mQuestionBank[rnd].ismAnswerTrue();
+                //Log the first question
+                int id = mQuestionBank[0].getmTextResId();
+                boolean truth = mQuestionBank[0].ismAnswerTrue();
                 Logger.d("The ID is " + id + " and the answer is: " + truth);
+
+                //Log random int
+                final int test = new Random().nextInt(61) + 20;
+                Logger.d(test);
+
+                //Log random question from questions
+                int rnd = new Random().nextInt(mQuestionBank.length);
+                int id2 = mQuestionBank[rnd].getmTextResId();
+                boolean truth2 = mQuestionBank[rnd].ismAnswerTrue();
+                Logger.d("The ID is " + id2 + " and the answer is: " + truth2);
 
                 //displays correct text when true button is clicked
                 Toast correct = Toast.makeText(MainActivity.this, R.string.correct_toast, Toast.LENGTH_SHORT);
