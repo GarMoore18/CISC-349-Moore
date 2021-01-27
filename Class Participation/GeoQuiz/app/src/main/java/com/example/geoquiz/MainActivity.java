@@ -11,6 +11,8 @@ import android.widget.Toast;
 import com.orhanobut.logger.AndroidLogAdapter;
 import com.orhanobut.logger.Logger;
 
+import java.util.Random;
+
 public class MainActivity extends AppCompatActivity {
     private Button mTrueButton;
     private Button mFalseButton;
@@ -24,22 +26,30 @@ public class MainActivity extends AppCompatActivity {
             new Question(R.string.question_asia, true),
     };
 
+    private int mCurrentIndex;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main); //Set UI for user
+
         Logger.addLogAdapter(new AndroidLogAdapter());
 
         mTrueButton = findViewById(R.id.true_button);
         mFalseButton = findViewById(R.id.false_button);
+        //mQuestionTextView = findViewById(R.id.question_text);
+
+        int question = mQuestionBank[mCurrentIndex].getmTextResId();
+        //mQuestionTextView.setText(question);
 
         //click event for the true button and does something
         mTrueButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                int id = mQuestionBank[0].getmTextResId();
-                boolean truth = mQuestionBank[0].ismAnswerTrue();
-                Logger.d("The ID is " + id + " and the answer is:" + truth);
+                int rnd = new Random().nextInt(mQuestionBank.length);
+                int id = mQuestionBank[rnd].getmTextResId();
+                boolean truth = mQuestionBank[rnd].ismAnswerTrue();
+                Logger.d("The ID is " + id + " and the answer is: " + truth);
 
                 //displays correct text when true button is clicked
                 Toast correct = Toast.makeText(MainActivity.this, R.string.correct_toast, Toast.LENGTH_SHORT);
