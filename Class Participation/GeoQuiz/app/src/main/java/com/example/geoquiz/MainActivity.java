@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.orhanobut.logger.AndroidLogAdapter;
@@ -16,6 +17,8 @@ import java.util.Random;
 public class MainActivity extends AppCompatActivity {
     private Button mTrueButton;
     private Button mFalseButton;
+    private Button mNextButton;
+    private TextView mQuestionTextView;
 
     private Question[] mQuestionBank = new Question[] {
             new Question(R.string.question_australia, true),
@@ -26,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
             new Question(R.string.question_asia, true),
     };
 
-    private int mCurrentIndex;
+    private int mCurrentIndex = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,36 +38,19 @@ public class MainActivity extends AppCompatActivity {
 
         Logger.addLogAdapter(new AndroidLogAdapter());
 
+        //Finding the items in the layout
         mTrueButton = findViewById(R.id.true_button);
         mFalseButton = findViewById(R.id.false_button);
-        //mQuestionTextView = findViewById(R.id.question_text);
+        mNextButton = findViewById(R.id.next_button);
+        mQuestionTextView = findViewById(R.id.question_text);
 
-        int question = mQuestionBank[mCurrentIndex].getmTextResId();
-        //mQuestionTextView.setText(question);
+        updateQuestion();   //call to update question, initially index 0
 
         //click event for the true button and does something
         mTrueButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //Log the first question
-                int id = mQuestionBank[0].getmTextResId();
-                boolean truth = mQuestionBank[0].ismAnswerTrue();
-                Logger.d("The ID is " + id + " and the answer is: " + truth);
-
-                //Log random int
-                final int test = new Random().nextInt(61) + 20;
-                Logger.d(test);
-
-                //Log random question from questions
-                int rnd = new Random().nextInt(mQuestionBank.length);
-                int id2 = mQuestionBank[rnd].getmTextResId();
-                boolean truth2 = mQuestionBank[rnd].ismAnswerTrue();
-                Logger.d("The ID is " + id2 + " and the answer is: " + truth2);
-
-                //displays correct text when true button is clicked
-                Toast correct = Toast.makeText(MainActivity.this, R.string.correct_toast, Toast.LENGTH_SHORT);
-                correct.setGravity(Gravity.TOP, 0, 0);
-                correct.show();
+                checkAnswer(true);
             }
         });
 
@@ -72,11 +58,36 @@ public class MainActivity extends AppCompatActivity {
         mFalseButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //displays incorrect text when true button is clicked
-                Toast incorrect = Toast.makeText(MainActivity.this, R.string.incorrect_toast, Toast.LENGTH_SHORT);
-                incorrect.setGravity(Gravity.TOP, 0, 0);
-                incorrect.show();
+                checkAnswer(false);
             }
         });
+
+        //click event for the next button and moves through questions
+        mNextButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mCurrentIndex = (mCurrentIndex + 1) % mQuestionBank.length;
+                updateQuestion();
+
+            }
+        });
+    }
+
+    //to update which question that we are currently seeing
+    private void updateQuestion() {
+        int question = mQuestionBank[mCurrentIndex].getmTextResId();
+        mQuestionTextView.setText(question);
+    }
+
+    private void checkAnswer(boolean userAnswer) {
+        boolean answer = mQuestionBank[mCurrentIndex].ismAnswerTrue();
+        String message = "";
+        if (userAnswer == answer) {
+            message = "You Win!";
+        } else {
+            message = "You Lost!";
+        }
+        Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
+        
     }
 }
