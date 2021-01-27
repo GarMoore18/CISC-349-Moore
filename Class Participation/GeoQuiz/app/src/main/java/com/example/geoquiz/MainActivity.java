@@ -88,6 +88,6 @@ public class MainActivity extends AppCompatActivity {
             message = "You Lost!";
         }
         Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
-        
+
     }
 }
