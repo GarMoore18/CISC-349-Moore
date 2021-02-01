@@ -17,6 +17,7 @@ import java.util.Random;
 public class MainActivity extends AppCompatActivity {
     private Button mTrueButton;
     private Button mFalseButton;
+    private Button mPrevButton;
     private Button mNextButton;
     private TextView mQuestionTextView;
 
@@ -41,6 +42,7 @@ public class MainActivity extends AppCompatActivity {
         //Finding the items in the layout
         mTrueButton = findViewById(R.id.true_button);
         mFalseButton = findViewById(R.id.false_button);
+        mPrevButton = findViewById(R.id.prev_button);
         mNextButton = findViewById(R.id.next_button);
         mQuestionTextView = findViewById(R.id.question_text);
 
@@ -59,6 +61,20 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 checkAnswer(false);
+            }
+        });
+
+        //click event for the next button and moves through questions
+        mPrevButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mCurrentIndex == 0) {
+                    mCurrentIndex = mQuestionBank.length - 1;
+                } else {
+                    mCurrentIndex = (mCurrentIndex - 1) % mQuestionBank.length;
+                }
+                updateQuestion();
+
             }
         });
 
@@ -88,6 +104,9 @@ public class MainActivity extends AppCompatActivity {
             message = "You Lost!";
         }
         Toast.makeText(MainActivity.this, message, Toast.LENGTH_SHORT).show();
-
+        /*
+        Toast testToast = Toast.makeText(MainActivity.this, R.string.incorrect_toast, Toast.LENGTH_SHORT);
+        testToast.setGravity(Gravity.TOP, 0, 0);
+        testToast.show(); */
     }
 }
