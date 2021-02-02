@@ -14,9 +14,9 @@ onClickListener for every button */
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private TextView showNum;
-    //At any one time, there will only be two values
-    private double firstValue = Double.NaN;
-    private double secondValue;
+    private String currVal = "";    //Used for creating a current value
+
+    private double firstValue = Double.NaN;     //First value will be NaN until changed
 
     //The calculator can only do these computations
     private static final char add = '+';
@@ -24,8 +24,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static final char multiply = '*';
     private static final char divide = '/';
 
-    //Need a way to store what the next computation that will be done
-    private char nextComp;
+    private char useOper;  //Operator that will be used in the computation
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,6 +45,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Button bMin = findViewById(R.id.bmin);
         Button bMul = findViewById(R.id.bmul);
         Button bDiv = findViewById(R.id.bdiv);
+        Button bEqual = findViewById(R.id.equal);
 
         //These are a call to the onClick method
         bZero.setOnClickListener(this);
@@ -62,87 +62,109 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         bMin.setOnClickListener(this);
         bMul.setOnClickListener(this);
         bDiv.setOnClickListener(this);
+        bEqual.setOnClickListener(this);
 
     }
 
     @Override
     public void onClick(View v) {
         showNum = findViewById(R.id.show_calc);
-        String currText = showNum.getText().toString();
 
         //Each button provides a unique string
         switch (v.getId()) {
             case R.id.b0:
-                showNum.setText("0");
+                currVal += "0";
+                showNum.setText(currVal);
                 break;
             case R.id.b1:
-                showNum.setText("1");
+                currVal += "1";
+                showNum.setText(currVal);
                 break;
             case R.id.b2:
-                showNum.setText("2");
+                currVal += "2";
+                showNum.setText(currVal);
                 break;
             case R.id.b3:
-                showNum.setText("3");
+                currVal += "3";
+                showNum.setText(currVal);
                 break;
             case R.id.b4:
-                showNum.setText("4");
+                currVal += "4";
+                showNum.setText(currVal);
                 break;
             case R.id.b5:
-                showNum.setText("5");
+                currVal += "5";
+                showNum.setText(currVal);
                 break;
             case R.id.b6:
-                showNum.setText("6");
+                currVal += "6";
+                showNum.setText(currVal);
                 break;
             case R.id.b7:
-                showNum.setText("7");
+                currVal += "7";
+                showNum.setText(currVal);
                 break;
             case R.id.b8:
-                showNum.setText("8");
+                currVal += "8";
+                showNum.setText(currVal);
                 break;
             case R.id.b9:
-                showNum.setText("9");
+                currVal += "9";
+                showNum.setText(currVal);
                 break;
             case R.id.bp:
                 makeComputation();
-                nextComp = add;
-                showNum.setText(String.valueOf(firstValue));
+                useOper = add;
+                currVal = "";
                 break;
             case R.id.bmin:
                 makeComputation();
-                nextComp = subtract;
-                showNum.setText(String.valueOf(firstValue));
+                useOper = subtract;
                 break;
             case R.id.bmul:
                 makeComputation();
-                nextComp = multiply;
-                showNum.setText(String.valueOf(firstValue));
+                useOper = multiply;
                 break;
             case R.id.bdiv:
                 makeComputation();
-                nextComp = divide;
-                showNum.setText(String.valueOf(firstValue));
+                useOper = divide;
+                break;
+            case R.id.equal:
+                makeComputation();
+                firstValue = Double.NaN;
+                useOper = '0';     //Resets the operator
                 break;
             default:
                 break;
         }
-
     }
 
+    //Method that performs the correct operation if possible
     private void makeComputation() {
-        if (Double.isNaN(firstValue)) {
-            firstValue = Double.parseDouble(showNum.getText().toString());
+        //Denies the user from using an operator before adding a second value
+        if (!currVal.equals("")) {
 
-        } else {
-            secondValue = Double.parseDouble(showNum.getText().toString());
-            if (nextComp == add) {
-                firstValue = this.firstValue + secondValue;
-            } else if (nextComp == subtract) {
-                firstValue = this.firstValue - secondValue;
-            } else if (nextComp == multiply) {
-                firstValue = this.firstValue * secondValue;
-            } else if (nextComp == divide) {
-                firstValue = this.firstValue / secondValue;
+            //Assigns the first value in the computation if there is not one
+            if (Double.isNaN(firstValue)) {
+                firstValue = Double.parseDouble(showNum.getText().toString());
+
+            //There was a first value, so perform the correct operation
+            } else {
+                double secondValue = Double.parseDouble(showNum.getText().toString());
+
+                if (useOper == add) {
+                    firstValue = this.firstValue + secondValue;
+                } else if (useOper == subtract) {
+                    firstValue = this.firstValue - secondValue;
+                } else if (useOper == multiply) {
+                    firstValue = this.firstValue * secondValue;
+                } else if (useOper == divide) {
+                    firstValue = this.firstValue / secondValue;
+                }
+                showNum.setText(String.valueOf(firstValue));    //Will show the computed value
             }
+
+            currVal = "";   //Resets the value that is currently being entered
         }
     }
 }
