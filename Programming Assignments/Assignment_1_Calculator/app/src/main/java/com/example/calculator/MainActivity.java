@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.lang.reflect.Method;
 import java.text.DecimalFormat;
 
 /* This class implements the OnClickListener so there is no need to rewrite a new
@@ -14,7 +15,8 @@ onClickListener for every button */
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private TextView showNum;
-    private String currVal = "";    //Used for creating a current value
+    private String currVal = "";    //Used for storing a current value
+    private String lastNum = "";    //Used for storing previous answer
 
     private double firstValue = Double.NaN;     //First value will be NaN until changed
 
@@ -31,6 +33,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //Stores the buttons in variables
         Button bZero = findViewById(R.id.b0);
         Button bOne = findViewById(R.id.b1);
         Button bTwo = findViewById(R.id.b2);
@@ -115,7 +118,6 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             case R.id.bp:
                 makeComputation();
                 useOper = add;
-                currVal = "";
                 break;
             case R.id.bmin:
                 makeComputation();
@@ -131,40 +133,56 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 break;
             case R.id.equal:
                 makeComputation();
+                lastNum = String.valueOf(firstValue);
                 firstValue = Double.NaN;
-                useOper = '0';     //Resets the operator
+                useOper = 'e';     //Resets the operator
                 break;
             default:
                 break;
         }
     }
 
-    //Method that performs the correct operation if possible
-    private void makeComputation() {
-        //Denies the user from using an operator before adding a second value
-        if (!currVal.equals("")) {
+    /*
+    Method that defines which way the operations should be performed
+    This is important for calculations such as 1 + 2 = + 3.
+    */
+    private void correctWay(double partOne, double partTwo) {
+        //Will execute if there is not a value stored yet
+        if (Double.isNaN(firstValue)) {
+            firstValue = Double.parseDouble(showNum.getText().toString());
 
-            //Assigns the first value in the computation if there is not one
-            if (Double.isNaN(firstValue)) {
-                firstValue = Double.parseDouble(showNum.getText().toString());
-
-            //There was a first value, so perform the correct operation
-            } else {
-                double secondValue = Double.parseDouble(showNum.getText().toString());
-
-                if (useOper == add) {
-                    firstValue = this.firstValue + secondValue;
-                } else if (useOper == subtract) {
-                    firstValue = this.firstValue - secondValue;
-                } else if (useOper == multiply) {
-                    firstValue = this.firstValue * secondValue;
-                } else if (useOper == divide) {
-                    firstValue = this.firstValue / secondValue;
-                }
-                showNum.setText(String.valueOf(firstValue));    //Will show the computed value
+        //Will execute an operation if there are two values stored
+        } else {
+            if (useOper == add) {
+                firstValue = partOne + partTwo;
+            } else if (useOper == subtract) {
+                firstValue = partOne - partTwo;
+            } else if (useOper == multiply) {
+                firstValue = partOne * partTwo;
+            } else if (useOper == divide) {
+                firstValue = partOne / partTwo;
             }
-
-            currVal = "";   //Resets the value that is currently being entered
+            showNum.setText(String.valueOf(firstValue));    //Will show the computed value
         }
+    }
+
+    /*
+    Method that defines what the values are for the operation and
+    then makes a call to decide which way the values should be
+    operated on.
+    */
+    private void makeComputation() {
+        //Will execute if the equal sign and then a operator is selected
+        if (!lastNum.equals("") && currVal.equals("")) {
+            double secondValue = Double.parseDouble(lastNum);
+            correctWay(secondValue, firstValue);
+            lastNum = "";   //Resets the last number selecting equals more than once does nothing
+
+        //Will execute if there was a value already stored
+        } else if (!currVal.equals("")) {
+            double secondValue = Double.parseDouble(showNum.getText().toString());
+            correctWay(firstValue, secondValue);
+        }
+        currVal = "";   //Reset the value that the user wants
     }
 }
