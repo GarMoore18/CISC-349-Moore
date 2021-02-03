@@ -1,8 +1,10 @@
 package com.example.geoquiz;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
@@ -19,7 +21,11 @@ public class MainActivity extends AppCompatActivity {
     private Button mFalseButton;
     private Button mPrevButton;
     private Button mNextButton;
+    private Button mCheatButton;
     private TextView mQuestionTextView;
+
+    private static final String TAG = "MainActivity";
+    private static final String KEY_INDEX = "index";
 
     private Question[] mQuestionBank = new Question[] {
             new Question(R.string.question_australia, true),
@@ -44,7 +50,14 @@ public class MainActivity extends AppCompatActivity {
         mFalseButton = findViewById(R.id.false_button);
         mPrevButton = findViewById(R.id.prev_button);
         mNextButton = findViewById(R.id.next_button);
+        mCheatButton = findViewById(R.id.cheat_button);
+
         mQuestionTextView = findViewById(R.id.question_text);
+
+        //Used to ensure orientation change does not change screen data
+        if (savedInstanceState != null) {
+            mCurrentIndex = savedInstanceState.getInt(KEY_INDEX, 0);
+        }
 
         updateQuestion();   //call to update question, initially index 0
 
@@ -78,6 +91,13 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        mCheatButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Logger.d("Cheating");
+            }
+        });
+
         //click event for the next button and moves through questions
         mNextButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -87,6 +107,45 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Logger.d("onStart");
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        Logger.d("onStop");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        Logger.d("onPause");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        Logger.d("onDestroy");
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Logger.d("onResume");
+    }
+
+    @Override
+    protected void onSaveInstanceState(final Bundle outState) {
+        super.onSaveInstanceState(outState);
+        Log.i(TAG, "onSaveInstanceState");
+
+        // Save the state of item position
+        outState.putInt(KEY_INDEX, mCurrentIndex);
     }
 
     //to update which question that we are currently seeing
