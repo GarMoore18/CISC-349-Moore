@@ -3,9 +3,11 @@ package com.example.calculator;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.lang.reflect.Method;
 import java.text.DecimalFormat;
@@ -26,12 +28,19 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private static final char multiply = '*';
     private static final char divide = '/';
 
+    private Button bPlus;
+    private Button bMin;
+    private Button bMul;
+    private Button bDiv;
+
     private char useOper;  //Operator that will be used in the computation
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        showNum = findViewById(R.id.show_calc);
 
         //Stores the buttons in variables
         Button bZero = findViewById(R.id.b0);
@@ -44,11 +53,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         Button bSeven = findViewById(R.id.b7);
         Button bEight = findViewById(R.id.b8);
         Button bNine = findViewById(R.id.b9);
-        Button bPlus = findViewById(R.id.bp);
-        Button bMin = findViewById(R.id.bmin);
-        Button bMul = findViewById(R.id.bmul);
-        Button bDiv = findViewById(R.id.bdiv);
+        bPlus = findViewById(R.id.bp);
+        bMin = findViewById(R.id.bmin);
+        bMul = findViewById(R.id.bmul);
+        bDiv = findViewById(R.id.bdiv);
         Button bEqual = findViewById(R.id.equal);
+        Button bDeci = findViewById(R.id.bdeci);
 
         //These are a call to the onClick method
         bZero.setOnClickListener(this);
@@ -66,7 +76,20 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         bMul.setOnClickListener(this);
         bDiv.setOnClickListener(this);
         bEqual.setOnClickListener(this);
+        bDeci.setOnClickListener(this);
 
+        //To clear the items with an equal sign long press
+        bEqual.setOnLongClickListener(new View.OnLongClickListener() {
+            @Override
+            public boolean onLongClick(View v) {
+                currVal = "";
+                lastNum = "";
+                firstValue = Double.NaN;
+                showNum.setText("");
+                Toast.makeText(MainActivity.this, "Cleared", Toast.LENGTH_SHORT).show();
+                return true;
+            }
+        });
     }
 
     @Override
@@ -76,70 +99,110 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         //Each button provides a unique string
         switch (v.getId()) {
             case R.id.b0:
+                resetHighlight();
                 currVal += "0";
                 showNum.setText(currVal);
                 break;
             case R.id.b1:
+                resetHighlight();
                 currVal += "1";
                 showNum.setText(currVal);
                 break;
             case R.id.b2:
+                resetHighlight();
                 currVal += "2";
                 showNum.setText(currVal);
                 break;
             case R.id.b3:
+                resetHighlight();
                 currVal += "3";
                 showNum.setText(currVal);
                 break;
             case R.id.b4:
+                resetHighlight();
                 currVal += "4";
                 showNum.setText(currVal);
                 break;
             case R.id.b5:
+                resetHighlight();
                 currVal += "5";
                 showNum.setText(currVal);
                 break;
             case R.id.b6:
+                resetHighlight();
                 currVal += "6";
                 showNum.setText(currVal);
                 break;
             case R.id.b7:
+                resetHighlight();
                 currVal += "7";
                 showNum.setText(currVal);
                 break;
             case R.id.b8:
+                resetHighlight();
                 currVal += "8";
                 showNum.setText(currVal);
                 break;
             case R.id.b9:
+                resetHighlight();
                 currVal += "9";
                 showNum.setText(currVal);
                 break;
+            case R.id.bdeci:
+                resetHighlight();
+                //Allows for only one decimal per value
+                if (!currVal.contains(".")) {
+                    currVal += ".";
+                } else {
+                    Toast.makeText(this, "Already used a decimal", Toast.LENGTH_SHORT).show();
+                }
+                showNum.setText(currVal);
+                break;
             case R.id.bp:
+                resetHighlight();
+                bPlus.setBackgroundResource(R.drawable.button_highlight);
                 makeComputation();
                 useOper = add;
                 break;
             case R.id.bmin:
+                resetHighlight();
+                bMin.setBackgroundResource(R.drawable.button_highlight);
                 makeComputation();
                 useOper = subtract;
                 break;
             case R.id.bmul:
+                resetHighlight();
+                bMul.setBackgroundResource(R.drawable.button_highlight);
                 makeComputation();
                 useOper = multiply;
                 break;
             case R.id.bdiv:
+                resetHighlight();
+                bDiv.setBackgroundResource(R.drawable.button_highlight);
                 makeComputation();
                 useOper = divide;
                 break;
             case R.id.equal:
+                resetHighlight();
                 makeComputation();
-                lastNum = String.valueOf(firstValue);
-                firstValue = Double.NaN;
-                useOper = 'e';     //Resets the operator
+                //Ensures that if a decimal followed by "." will still save last answer
+                if (currVal.equals("") && !Double.isNaN(firstValue)) {
+                    lastNum = String.valueOf(firstValue);
+                    firstValue = Double.NaN;
+                    useOper = 'e';     //Resets the operator
+                }
                 break;
             default:
                 break;
         }
+    }
+
+    //Resets the operator button colors
+    public void resetHighlight() {
+        bPlus.setBackgroundResource(0);
+        bMin.setBackgroundResource(0);
+        bMul.setBackgroundResource(0);
+        bDiv.setBackgroundResource(0);
     }
 
     /*
@@ -172,6 +235,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     operated on.
     */
     private void makeComputation() {
+        //Makes sure that a value is not just a decimal
+        if (currVal.endsWith(".") && currVal.startsWith(".")) {
+            Toast.makeText(this, "This is just a decimal", Toast.LENGTH_SHORT).show();
+            return;
+        }
         //Will execute if the equal sign and then a operator is selected
         if (!lastNum.equals("") && currVal.equals("")) {
             double secondValue = Double.parseDouble(lastNum);
