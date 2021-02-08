@@ -1,8 +1,12 @@
 package com.example.geoquiz;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.recyclerview.widget.RecyclerView;
 
+import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
@@ -24,6 +28,9 @@ public class MainActivity extends AppCompatActivity {
     private Button mCheatButton;
     private TextView mQuestionTextView;
 
+    public static final String EXTRA_MESSAGE = "com.example.geoquiz.MESSAGE";
+    private static final int REQUEST_CODE_CHEAT = 0;
+
     private static final String TAG = "MainActivity";
     private static final String KEY_INDEX = "index";
 
@@ -37,6 +44,19 @@ public class MainActivity extends AppCompatActivity {
     };
 
     private int mCurrentIndex = 0;
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        Logger.d(requestCode);
+        if (requestCode == REQUEST_CODE_CHEAT) {
+            if (resultCode == Activity.RESULT_OK) {
+                Logger.d("Result okay and code is 0.");
+            } else {
+                Logger.d("Result cancelled");
+            }
+        }
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -95,6 +115,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Logger.d("Cheating");
+                Intent i = new Intent(MainActivity.this, CheatActivity.class);
+                String message = "Hello from Main Activity";
+                i.putExtra(EXTRA_MESSAGE, message);
+                startActivityForResult(i, REQUEST_CODE_CHEAT);
             }
         });
 
