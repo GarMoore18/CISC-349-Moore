@@ -25,7 +25,7 @@ Examples
     - 5 * 5 will dispaly a 5 and then a 25
     - 5 / 5 will display a 5 and then a 1
 
-Special Messages
+Messages
  - Decimal
     - When attempting to add to many decimals to a number (more than 1)
         a message will appear notifying that a decimal has been used
