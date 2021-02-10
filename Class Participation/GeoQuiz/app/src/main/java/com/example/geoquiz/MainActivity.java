@@ -6,6 +6,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -29,6 +30,7 @@ public class MainActivity extends AppCompatActivity {
     private TextView mQuestionTextView;
 
     public static final String EXTRA_MESSAGE = "com.example.geoquiz.MESSAGE";
+    public static final String CHEAT_ANSWER = null;
     private static final int REQUEST_CODE_CHEAT = 0;
 
     private static final String TAG = "MainActivity";
@@ -42,6 +44,7 @@ public class MainActivity extends AppCompatActivity {
             new Question(R.string.question_americas, true),
             new Question(R.string.question_asia, true),
     };
+
 
     private int mCurrentIndex = 0;
 
@@ -107,7 +110,6 @@ public class MainActivity extends AppCompatActivity {
                     mCurrentIndex = (mCurrentIndex - 1) % mQuestionBank.length;
                 }
                 updateQuestion();
-
             }
         });
 
@@ -116,8 +118,12 @@ public class MainActivity extends AppCompatActivity {
             public void onClick(View v) {
                 Logger.d("Cheating");
                 Intent i = new Intent(MainActivity.this, CheatActivity.class);
-                String message = "Hello from Main Activity";
-                i.putExtra(EXTRA_MESSAGE, message);
+
+                String answer = String.valueOf(mQuestionBank[mCurrentIndex].ismAnswerTrue());
+                //String message = "Hello from Main Activity";
+
+                i.putExtra(CHEAT_ANSWER, answer);
+                //i.putExtra(EXTRA_MESSAGE, message);
                 startActivityForResult(i, REQUEST_CODE_CHEAT);
             }
         });
