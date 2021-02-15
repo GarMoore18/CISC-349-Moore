@@ -3,10 +3,14 @@ package com.example.myfirstviewlist;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+import android.util.ArrayMap;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
     private static final String TAG = "MainActivity";
@@ -29,5 +33,14 @@ public class MainActivity extends AppCompatActivity {
         /*for (String s : listItem) {
             Log.d(TAG, s);
         }*/
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.d(TAG, adapter.getItem(position));
+                String lang = adapter.getItem(position);
+                Toast.makeText(MainActivity.this, lang, Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        }
     }
-}
