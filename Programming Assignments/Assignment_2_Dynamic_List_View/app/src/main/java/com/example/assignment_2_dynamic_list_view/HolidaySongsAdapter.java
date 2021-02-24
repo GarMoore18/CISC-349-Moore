@@ -2,6 +2,7 @@ package com.example.assignment_2_dynamic_list_view;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.content.res.Resources;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -51,7 +52,7 @@ public class HolidaySongsAdapter extends BaseAdapter {
         album_img.setText(arrayList.get(position).getAlbum_img());
         album_name.setText(arrayList.get(position).getAlbum_name());
         artist_name.setText(arrayList.get(position).getArtist_name());
-        danceability.setText(String.valueOf(arrayList.get(position).getDanceability()));
+        danceability.setText("Danceability: " + arrayList.get(position).getDanceability());
 
         //Convert ms to min:sec
         int duration_before = arrayList.get(position).getDuration_ms();

@@ -17,7 +17,7 @@
 
     <TextView
         android:id="@+id/album_name"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignTop="@+id/album_img"
         android:layout_toEndOf="@+id/album_img"
@@ -26,7 +26,7 @@
 
     <TextView
         android:id="@+id/artist_name"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/album_name"
         android:layout_toEndOf="@+id/album_img"
@@ -35,7 +35,7 @@
 
     <TextView
         android:id="@+id/danceability"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/artist_name"
         android:layout_toEndOf="@+id/album_img"
@@ -44,7 +44,7 @@
 
     <TextView
         android:id="@+id/duration"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_alignParentEnd="true"
