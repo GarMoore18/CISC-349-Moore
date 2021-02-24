@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF"
+    android:paddingBottom="@dimen/activity_vert_mar"
+    android:paddingLeft="@dimen/activity_hori_mar"
+    android:paddingRight="@dimen/activity_hori_mar"
+    android:paddingTop="@dimen/activity_vert_mar"
+    tools:context=".MainActivity">
+
+    <com.android.volley.toolbox.NetworkImageView
+        android:id="@+id/networkImageView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerHorizontal="true"
+        android:background="#000000"/>
+
+</RelativeLayout>
