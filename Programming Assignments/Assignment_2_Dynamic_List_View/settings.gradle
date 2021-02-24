@@ -1,0 +1,2 @@
+include ':app'
+rootProject.name = "Assignment_2_Dynamic_List_View"
