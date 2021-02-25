@@ -2,8 +2,11 @@ package com.example.assignment_2_dynamic_list_view;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.util.Log;
+import android.util.LruCache;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
@@ -14,7 +17,9 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
+import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.NetworkImageView;
 import com.android.volley.toolbox.Volley;
 
 import org.json.JSONArray;
@@ -24,6 +29,8 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
+
+    public static ImageLoader imageLoader;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -41,6 +48,23 @@ public class MainActivity extends AppCompatActivity {
 
         //Using volley to request the information
         RequestQueue queue = Volley.newRequestQueue(this);
+
+        //Creating image loader with LruCache
+        imageLoader = new ImageLoader(queue, new ImageLoader.ImageCache() {
+            private final LruCache<String, Bitmap> mCache = new LruCache<String,
+                    Bitmap>(20);
+
+            @Override
+            public Bitmap getBitmap(String url) {
+                return mCache.get(url);
+            }
+
+            @Override
+            public void putBitmap(String url, Bitmap bitmap) {
+                mCache.put(url, bitmap);
+
+            }
+        });
 
         JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET,
                 "https://setify.info:3000/holiday_songs_spotify", null,
@@ -80,8 +104,11 @@ public class MainActivity extends AppCompatActivity {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                String name = arrayOfSongs.get(position).getAlbum_name();
-                Toast.makeText(MainActivity.this,  name, Toast.LENGTH_SHORT).show();
+                Intent intent = new Intent(MainActivity.this, ViewSongs.class);
+                intent.putExtra("ALBUM_NAME", arrayOfSongs.get(position).getAlbum_name());
+                intent.putExtra("PLAYLIST_IMG", arrayOfSongs.get(position).getPlaylist_img());
+
+                startActivity(intent);
             }
         });
     }

@@ -1,4 +1,4 @@
 <resources>
     <string name="app_name">Assignment_2_Dynamic_List_View</string>
-    <string name="dance_text">Danceability</string>
+    <string name="dance_text">"Danceability: "</string>
 </resources>

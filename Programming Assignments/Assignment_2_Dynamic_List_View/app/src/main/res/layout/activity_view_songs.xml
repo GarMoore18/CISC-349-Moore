@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingBottom="@dimen/activity_vert_mar"
+    android:paddingLeft="@dimen/activity_hori_mar"
+    android:paddingRight="@dimen/activity_hori_mar"
+    android:paddingTop="@dimen/activity_vert_mar"
+    android:background="@color/cream">
+
+    <TextView
+        android:id="@+id/big_album_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:gravity="center_horizontal"
+        android:textColor="@color/black"
+        android:paddingTop="20dp"
+        android:paddingBottom="-10dp"
+        android:textSize="35sp" />
+
+    <com.android.volley.toolbox.NetworkImageView
+        android:id="@+id/playlist_img"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/big_album_name"
+        android:layout_centerHorizontal="true"
+        android:layout_marginEnd="8dp" />
+
+</RelativeLayout>
