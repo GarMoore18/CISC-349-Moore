@@ -1,5 +1,5 @@
 CISC-349-Moore
-Assignment 2: Dynamic List View
+#Assignment 2: Dynamic List View
 
 Creates a simple dynamic list view by implementing a custom adapter and two libraries (Android Volley and LruCache).
 
