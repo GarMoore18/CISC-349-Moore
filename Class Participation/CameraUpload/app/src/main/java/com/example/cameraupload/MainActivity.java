@@ -97,7 +97,7 @@ public class MainActivity extends AppCompatActivity {
 
         Logger.d(image);
 
-        final String URL = "http://10.0.0.184/image";
+        final String URL = "http://10.0.0.133/image";
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, URL, json,
                 new Response.Listener<JSONObject>() {
@@ -108,6 +108,7 @@ public class MainActivity extends AppCompatActivity {
             }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
+
                 Logger.e(error.getMessage());
             }
         });
