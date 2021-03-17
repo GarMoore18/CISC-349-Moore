@@ -9,6 +9,7 @@ import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.provider.MediaStore;
 import android.util.Base64;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
@@ -97,7 +98,7 @@ public class MainActivity extends AppCompatActivity {
 
         Logger.d(image);
 
-        final String URL = "http://10.0.0.133/image";
+        final String URL = "http://10.0.0.133:5000/image";
 
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, URL, json,
                 new Response.Listener<JSONObject>() {
