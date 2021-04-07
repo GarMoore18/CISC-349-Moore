@@ -3,6 +3,8 @@ import numpy as np
 from tensorflow.python.keras.models import Sequential
 from tensorflow.python.keras.layers import Dense
 
+
+tf.test.is_gpu_available()
 #x1 = np.random.randint(50, 351, size=7)
 #y1 = np.random.randint(1, 8, size=7)
 
