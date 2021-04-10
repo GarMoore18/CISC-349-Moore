@@ -1,4 +1,4 @@
-package com.example.finalprojectmoore.ui.home;
+package com.example.finalprojectmoore.ui.graphsdisplay;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -14,17 +14,17 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.finalprojectmoore.R;
 
-public class HomeFragment extends Fragment {
+public class GraphsFragment extends Fragment {
 
-    private HomeViewModel homeViewModel;
+    private GraphsViewModel graphsViewModel;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        homeViewModel =
-                new ViewModelProvider(this).get(HomeViewModel.class);
-        View root = inflater.inflate(R.layout.fragment_home, container, false);
-        final TextView textView = root.findViewById(R.id.text_home);
-        homeViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
+        graphsViewModel =
+                new ViewModelProvider(this).get(GraphsViewModel.class);
+        View root = inflater.inflate(R.layout.graphs_fragment, container, false);
+        final TextView textView = root.findViewById(R.id.text_graphs);
+        graphsViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
             public void onChanged(@Nullable String s) {
                 textView.setText(s);

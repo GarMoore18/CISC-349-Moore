@@ -1,16 +1,16 @@
-package com.example.finalprojectmoore.ui.gallery;
+package com.example.finalprojectmoore.ui.exerciselogger;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-public class GalleryViewModel extends ViewModel {
+public class ExerciseViewModel extends ViewModel {
 
     private MutableLiveData<String> mText;
 
-    public GalleryViewModel() {
+    public ExerciseViewModel() {
         mText = new MutableLiveData<>();
-        mText.setValue("This is gallery fragment");
+        mText.setValue("This is exercise fragment");
     }
 
     public LiveData<String> getText() {

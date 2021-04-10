@@ -1,11 +1,86 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center"
     tools:context=".ui.platecalculator.PlatesFragment">
+
+    <LinearLayout
+            android:id="@+id/weight_change"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/round_bg_rec">
+
+        <Button
+            android:id="@+id/weight_minus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/minus"
+            style="@style/Widget.AppCompat.Button.Borderless" />
+
+        <TextView
+            android:id="@+id/weight_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/weight"
+            android:textColor="@color/white"
+            android:paddingEnd="4dp"
+            android:paddingStart="4dp"
+            android:textAllCaps="true" />
+
+        <Button
+            android:id="@+id/weight_plus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/plus"
+            style="@style/Widget.AppCompat.Button.Borderless" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/barbell_change"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:background="@drawable/round_bg_rec">
+
+        <Button
+            android:id="@+id/barbell_minus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/minus"
+            style="@style/Widget.AppCompat.Button.Borderless" />
+
+        <TextView
+            android:id="@+id/barbell_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/barbell"
+            android:textColor="@color/white"
+            android:textAllCaps="true"
+            style="@style/Widget.AppCompat.TextView"/>
+
+        <Button
+            android:id="@+id/barbell_plus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/plus"
+            style="@style/Widget.AppCompat.Button.Borderless" />
+    </LinearLayout>
+
+
+    <include
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="50dp"
+        android:layout_marginStart="50dp"
+        android:layout_marginTop="10dp"
+        layout="@layout/plates_table" />
 
     <TextView
         android:id="@+id/text_plates"
@@ -21,4 +96,4 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+</LinearLayout>

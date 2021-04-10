@@ -51,7 +51,7 @@ public class MainActivity extends AppCompatActivity {
     // Setup for the side navigation bar
     private void navBarSetup() {
         mAppBarConfiguration = new AppBarConfiguration.Builder(
-                R.id.nav_home, R.id.nav_gallery, R.id.nav_slideshow, R.id.nav_plates)
+                R.id.nav_exercise, R.id.nav_graphs, R.id.nav_percentages, R.id.nav_plates)
                 .setDrawerLayout(drawer)
                 .build();
         navController = Navigation.findNavController(this, R.id.nav_host_fragment);

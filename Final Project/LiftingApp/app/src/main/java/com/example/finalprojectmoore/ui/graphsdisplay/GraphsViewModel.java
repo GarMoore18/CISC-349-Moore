@@ -1,16 +1,16 @@
-package com.example.finalprojectmoore.ui.home;
+package com.example.finalprojectmoore.ui.graphsdisplay;
 
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
-public class HomeViewModel extends ViewModel {
+public class GraphsViewModel extends ViewModel {
 
     private MutableLiveData<String> mText;
 
-    public HomeViewModel() {
+    public GraphsViewModel() {
         mText = new MutableLiveData<>();
-        mText.setValue("This is home fragment");
+        mText.setValue("This is graphs fragment");
     }
 
     public LiveData<String> getText() {

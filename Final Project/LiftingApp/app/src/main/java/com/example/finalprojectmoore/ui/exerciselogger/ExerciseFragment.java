@@ -1,4 +1,4 @@
-package com.example.finalprojectmoore.ui.gallery;
+package com.example.finalprojectmoore.ui.exerciselogger;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -14,17 +14,17 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.finalprojectmoore.R;
 
-public class GalleryFragment extends Fragment {
+public class ExerciseFragment extends Fragment {
 
-    private GalleryViewModel galleryViewModel;
+    private ExerciseViewModel exerciseViewModel;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        galleryViewModel =
-                new ViewModelProvider(this).get(GalleryViewModel.class);
-        View root = inflater.inflate(R.layout.fragment_gallery, container, false);
-        final TextView textView = root.findViewById(R.id.text_gallery);
-        galleryViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
+        exerciseViewModel =
+                new ViewModelProvider(this).get(ExerciseViewModel.class);
+        View root = inflater.inflate(R.layout.exercise_fragment, container, false);
+        final TextView textView = root.findViewById(R.id.text_exercise);
+        exerciseViewModel.getText().observe(getViewLifecycleOwner(), new Observer<String>() {
             @Override
             public void onChanged(@Nullable String s) {
                 textView.setText(s);
