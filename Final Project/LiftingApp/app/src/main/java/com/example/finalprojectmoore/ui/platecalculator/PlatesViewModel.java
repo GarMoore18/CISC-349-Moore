@@ -10,7 +10,7 @@ public class PlatesViewModel extends ViewModel {
 
     public PlatesViewModel() {
         mText = new MutableLiveData<>();
-        mText.setValue("This is plates fragment");
+        mText.setValue("*Calculated weight may be lower than desired");
     }
 
     public LiveData<String> getText() {

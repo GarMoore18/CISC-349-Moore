@@ -30,12 +30,13 @@
     <!-- Plates Fragment -->
     <string name="plate_type">Plates</string>
     <string name="per_side">Each Side</string>
-    <string name="total_weight">Total Weight</string>
-    <string name="weight">Weight</string>
-    <string name="barbell">Barbell</string>
+    <string name="total_weight">Total Weight: %1$d</string>
+    <string name="weight">WEIGHT</string>
+    <string name="barbell">BARBELL</string>
     <string name="plate_hold">LBS</string>
     <string name="plate_num">#</string>
     <string name="plus">+</string>
     <string name="minus">-</string>
+    <string name="calc_info">Desired weight: %1d\nCalculated weight: %2d</string>
 
 </resources>
