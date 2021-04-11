@@ -21,6 +21,10 @@ public class SpinnerAdapter extends BaseAdapter {
         layoutInflater = (LayoutInflater.from(applicationContext));
     }
 
+    public String[] getNames() {
+        return exercise_names;
+    }
+
     @Override
     public int getCount() {
         return exercise_imgs.length;

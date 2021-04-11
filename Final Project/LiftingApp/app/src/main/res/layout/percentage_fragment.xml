@@ -7,6 +7,9 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
+    android:id="@+id/main_percentage"
     tools:context=".ui.percentagecalculator.PercentageFragment">
 
     <Spinner
@@ -32,7 +35,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:layout_marginBottom="10dp"
         android:background="@drawable/round_bg_rec">
 
         <Button
@@ -65,8 +67,8 @@
     <include
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="50dp"
-        android:layout_marginStart="50dp"
+        android:layout_marginEnd="30dp"
+        android:layout_marginStart="30dp"
         android:layout_marginTop="10dp"
         layout="@layout/percentages_table" />
 
@@ -76,6 +78,6 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:textAlignment="center"
-        android:textSize="20sp" />
+        android:textStyle="bold" />
 
 </LinearLayout>

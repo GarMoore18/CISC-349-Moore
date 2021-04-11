@@ -10,7 +10,7 @@ public class PercentageViewModel extends ViewModel {
 
     public PercentageViewModel() {
         mText = new MutableLiveData<>();
-        mText.setValue("This is percentage fragment");
+        mText.setValue("*Calculated weight is rounded");
     }
 
     public LiveData<String> getText() {
