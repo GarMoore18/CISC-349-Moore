@@ -39,4 +39,10 @@
     <string name="minus">-</string>
     <string name="calc_info">Desired weight: %1d\nCalculated weight: %2d</string>
 
+    <!-- Percentages Fragment -->
+    <string name="percentage">Percentage</string>
+    <string name="weight_per">Weight</string>
+    <string name="reps">Reps</string>
+    <string name="exer_hold">Exercise</string>
+
 </resources>
