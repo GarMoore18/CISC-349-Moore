@@ -185,12 +185,12 @@ public class PercentageFragment extends Fragment {
                 try {
                     weight_int = Integer.parseInt(String.valueOf(wc.getText()));
                     exercise_spin.setSelection(0);  // Reset spinner choice if user enters weight
-                    Log.d("hey_int", String.valueOf(weight_int));
+                    //Log.d("hey_int", String.valueOf(weight_int));
                     calcSetRows(true);
                     wc.setHint("");
                 } catch (NumberFormatException notInt) {
                     weight_int = 0;
-                    Log.d("ENTERED?", String.valueOf(notInt));
+                    //Log.d("ENTERED?", String.valueOf(notInt));
                     calcSetRows(false);
                     wc.setHint(getResources().getString(R.string.weight));
                 }

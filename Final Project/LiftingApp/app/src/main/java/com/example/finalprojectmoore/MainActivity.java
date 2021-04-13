@@ -37,8 +37,8 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         // Setting up the floating button
-        fab = findViewById(R.id.fab);
-        floatingListener();
+        //fab = findViewById(R.id.fab);
+        //floatingListener();
 
         drawer = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_view);
