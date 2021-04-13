@@ -1,22 +1,117 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:gravity="center|top"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
     tools:context=".ui.exerciselogger.ExerciseFragment">
+
+    <Spinner
+        android:id="@+id/exercise_spinner"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:spinnerMode="dropdown"
+        android:background="@drawable/round_bg_rec"
+        android:layout_marginTop="40dp"
+        android:layout_marginBottom="10dp"
+        android:popupBackground="@color/grey"/>
+
+    <LinearLayout
+        android:id="@+id/weight_change"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_marginBottom="10dp"
+        android:background="@drawable/round_bg_rec">
+
+        <Button
+            android:id="@+id/weight_minus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/minus"
+            style="@style/Widget.AppCompat.Button.Borderless" />
+
+        <EditText
+            android:id="@+id/weight_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="@string/weight"
+            android:textColorHint="@color/white"
+            android:selectAllOnFocus="true"
+            android:inputType="numberDecimal"
+            android:maxLength="8"
+            android:textColor="@color/white"
+            style="@style/Widget.AppCompat.EditText" />
+
+        <Button
+            android:id="@+id/weight_plus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/plus"
+            style="@style/Widget.AppCompat.Button.Borderless" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/reps_change"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:background="@drawable/round_bg_rec">
+
+        <Button
+            android:id="@+id/reps_minus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/minus"
+            style="@style/Widget.AppCompat.Button.Borderless" />
+
+        <EditText
+            android:id="@+id/reps_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:hint="@string/reps_caps"
+            android:textColorHint="@color/white"
+            android:selectAllOnFocus="true"
+            android:inputType="numberDecimal"
+            android:maxLength="8"
+            android:textColor="@color/white"
+            style="@style/Widget.AppCompat.EditText" />
+
+        <Button
+            android:id="@+id/reps_plus"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/plus"
+            style="@style/Widget.AppCompat.Button.Borderless" />
+    </LinearLayout>
 
     <TextView
         android:id="@+id/text_exercise"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
         android:layout_marginTop="8dp"
-        android:layout_marginEnd="8dp"
         android:textAlignment="center"
-        android:textSize="20sp"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
-</androidx.constraintlayout.widget.ConstraintLayout>
+        android:textStyle="bold" />
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:layout_margin="20dp">
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/add_exercise"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="@string/add_set"
+            android:layout_alignParentBottom="true"
+            android:textColor="@color/white"
+            android:background="@drawable/round_bg_rec"/>
+    </RelativeLayout>
+
+</LinearLayout>

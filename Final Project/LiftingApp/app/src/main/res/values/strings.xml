@@ -6,7 +6,7 @@
 
     <!-- layout.nav_header_main.xml -->
     <string name="nav_header_title">Lift Tracker</string>
-    <string name="nav_header_subtitle">Hello, </string>
+    <string name="nav_header_subtitle">Hello, %1s!</string>
     <string name="nav_header_desc">Navigation header</string>
     <string name="action_settings">Settings</string>
 
@@ -44,5 +44,12 @@
     <string name="weight_per">Weight</string>
     <string name="reps">Reps</string>
     <string name="exer_hold">Exercise</string>
+
+    <!-- Exercise Fragment -->
+    <string name="reps_caps">REPS</string>
+    <string name="rep_cap_notify">Set has more than 10 reps.\nThe set will be excluded from 1RM.\n<a href="http://www.weightrainer.net/training/coefficients.html">Brzycki Formula</a></string>
+    <string name="add_set_info">*Add exercise, weight, and reps.</string>
+    <string name="add_set">Add Set</string>
+
 
 </resources>

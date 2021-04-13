@@ -1,8 +1,11 @@
 package com.example.finalprojectmoore.ui.platecalculator;
 
+import androidx.appcompat.widget.Toolbar;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -13,6 +16,8 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -47,6 +52,8 @@ public class PlatesFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         root = inflater.inflate(R.layout.plates_fragment, container, false);
+
+        setToolbarIcon();
 
         // Find identified views
         rw = root.findViewById(R.id.text_plates);
@@ -321,5 +328,15 @@ public class PlatesFragment extends Fragment {
                 rw.setText(s);
             }
         });
+    }
+
+    // Sets correct image in the toolbar
+    private void setToolbarIcon() {
+        Toolbar toolbar = requireActivity().findViewById(R.id.toolbar);
+        Menu menu = toolbar.getMenu();
+        MenuItem icon = menu.findItem(R.id.icon_set);
+        icon.setIcon(R.drawable.menu_plates);
+        Drawable drawable = icon.getIcon();
+        drawable.mutate().setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_IN);
     }
 }

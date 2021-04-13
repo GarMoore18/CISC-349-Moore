@@ -1,9 +1,14 @@
 package com.example.finalprojectmoore;
 
+import android.content.ClipData;
+import android.graphics.PorterDuff;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Menu;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -26,6 +31,7 @@ public class MainActivity extends AppCompatActivity {
     private DrawerLayout drawer;
     private NavigationView navigationView;
     private NavController navController;
+    private View headerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,10 +48,22 @@ public class MainActivity extends AppCompatActivity {
 
         drawer = findViewById(R.id.drawer_layout);
         navigationView = findViewById(R.id.nav_view);
+        headerView = navigationView.getHeaderView(0);  // Access the header
+
+        setWelcomeMessage();
 
         // Passing each menu ID as a set of Ids because each
         // menu should be considered as top level destinations.
         navBarSetup();
+    }
+
+    // Sets the welcome to Hello, <username>!
+    private void setWelcomeMessage() {
+        Bundle extras = getIntent().getExtras();
+        String username = extras.getString(LoginActivity.USERNAME);
+        TextView user_welcome = headerView.findViewById(R.id.welcome_user);
+        //Log.d("User", String.valueOf(user_welcome));
+        user_welcome.setText(String.format(getResources().getString(R.string.nav_header_subtitle), username));
     }
 
     // Setup for the side navigation bar
@@ -59,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupWithNavController(navigationView, navController);
     }
 
+    /*
     // On click for floating action
     private void floatingListener() {
         fab.setOnClickListener(new View.OnClickListener() {
@@ -69,11 +88,18 @@ public class MainActivity extends AppCompatActivity {
             }
         });
     }
+     */
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
+
+        // Sets the icon to the exercise log icon
+        MenuItem icon = menu.findItem(R.id.icon_set);
+        Drawable drawable = icon.getIcon();
+        drawable.mutate().setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_IN);
+        icon.setEnabled(false);
         return true;
     }
 
@@ -83,4 +109,5 @@ public class MainActivity extends AppCompatActivity {
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
     }
+
 }

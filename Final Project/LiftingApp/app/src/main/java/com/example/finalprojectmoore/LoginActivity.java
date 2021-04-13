@@ -2,6 +2,8 @@ package com.example.finalprojectmoore;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -11,6 +13,7 @@ import android.widget.EditText;
 
 public class LoginActivity extends AppCompatActivity {
 
+    public static final String USERNAME = "username_from_db";
     private EditText username, password;
     private String username_txt, password_txt;
     private Button login_btn;
@@ -39,11 +42,14 @@ public class LoginActivity extends AppCompatActivity {
 
                 //Log.d("Testing", username + " " + password);
 
-                loginRequest(); // Request database check
-
-                // Reset the text fields once submitted
-                username.setText("");
-                password.setText("");
+                if (allFieldsProvided()) {
+                    loginRequest(); // Request database check
+                    // Reset the text fields once submitted
+                    username.setText("");
+                    password.setText("");
+                } else {
+                    promptCheckFields();
+                }
             }
         });
     }
@@ -56,6 +62,26 @@ public class LoginActivity extends AppCompatActivity {
     // Start main activity
     private void loginSuccess() {
         Intent intent = new Intent(this, MainActivity.class);
+        intent.putExtra(USERNAME, username_txt);
         startActivity(intent);
+    }
+
+    private boolean allFieldsProvided() {
+        return !username_txt.equals("") && !password_txt.equals("");
+    }
+
+    private void promptCheckFields() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        builder.setCancelable(false);
+        builder.setTitle("Provide Credentials");
+        builder.setMessage("Please provide both a username and password.");
+
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+            }
+        });
+        builder.show();
     }
 }

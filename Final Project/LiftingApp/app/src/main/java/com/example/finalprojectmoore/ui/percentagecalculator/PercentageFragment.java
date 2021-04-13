@@ -1,12 +1,16 @@
 package com.example.finalprojectmoore.ui.percentagecalculator;
 
 import android.content.Context;
+import android.graphics.PorterDuff;
 import android.graphics.Rect;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,6 +27,7 @@ import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.widget.Toolbar;
 import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
@@ -47,7 +52,6 @@ public class PercentageFragment extends Fragment {
     private final String[] exercise_name_less = {"Bench", "Deadlift", "Squat"};
     private final int[] exercise_imgs_less = {R.drawable.spinner_bench, R.drawable.spinner_deadlift, R.drawable.spinner_squat};
 
-
     private int[] max_weight = {205, 275, 260};  // TODO: Fill with maxes from database
     private TableRow row;
     private TextView pc, wr, rc;
@@ -58,6 +62,8 @@ public class PercentageFragment extends Fragment {
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         root = inflater.inflate(R.layout.percentage_fragment, container, false);
+
+        setToolbarIcon();
 
         // Find identified views
         textView = root.findViewById(R.id.text_percentage);
@@ -285,5 +291,15 @@ public class PercentageFragment extends Fragment {
                 textView.setText(s);
             }
         });
+    }
+
+    // Sets correct image in the toolbar
+    private void setToolbarIcon() {
+        Toolbar toolbar = requireActivity().findViewById(R.id.toolbar);
+        Menu menu = toolbar.getMenu();
+        MenuItem icon = menu.findItem(R.id.icon_set);
+        icon.setIcon(R.drawable.menu_percentage);
+        Drawable drawable = icon.getIcon();
+        drawable.mutate().setColorFilter(getResources().getColor(R.color.white), PorterDuff.Mode.SRC_IN);
     }
 }
