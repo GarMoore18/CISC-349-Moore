@@ -29,11 +29,26 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
 import com.example.finalprojectmoore.MainActivity;
 import com.example.finalprojectmoore.R;
 import com.example.finalprojectmoore.SpinnerAdapter;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
+
 public class ExerciseFragment extends Fragment {
+
+    private static final String url = "http://10.0.0.133:5000/add_set";
 
     private ExerciseViewModel exerciseViewModel;
     private View root;
@@ -52,6 +67,9 @@ public class ExerciseFragment extends Fragment {
     private int weight_int = 0, rep_int = 0;
 
     private Button submit;
+
+    private int spinner_position;
+    private boolean added;
 
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         root = inflater.inflate(R.layout.exercise_fragment, container, false);
@@ -87,6 +105,62 @@ public class ExerciseFragment extends Fragment {
         repsTextWatcher();
 
         return root;
+    }
+
+    private void setRequest() {
+        RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
+
+        // Creating the JSON object to POST to flask
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("user_id", ((MainActivity) getActivity()).user_id);
+            jsonObject.put("exercise_id", spinner_position);
+            jsonObject.put("weight", weight_int);
+            jsonObject.put("reps", rep_int);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        Log.d("Object", String.valueOf(jsonObject));
+        // Creating the volley request
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, jsonObject,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.d("Response", String.valueOf(response));
+                        //Log.d("Response", String.valueOf(response.length()));
+
+                        // Get the set added response
+                        try {
+                            added = response.getBoolean("added");
+                            Log.d("Added", String.valueOf(added));
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+
+                        // Display correct message for added boolean
+                        if (added) {
+                            submitSuccessDialog();
+                        } else {
+                            submitFailureDialog();
+                        }
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("Error", String.valueOf(error));
+            }
+        }) {
+            @NonNull
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                final Map<String, String> params = new HashMap<>();
+                params.put("Content-Type", "application/json");  // Need this to talk to Flask
+                return params;
+            }
+        };
+
+        requestQueue.add(jsonObjectRequest);   //Add request to the queue
     }
 
     // Adds a hyperlink to the
@@ -248,9 +322,7 @@ public class ExerciseFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (allFieldsProvided()) {
-                    // TODO: Call volley request here
-                    // TODO: Within volley request use submitSuccessDialog() and submitFailureDialog()
-                    submitSuccessDialog();
+                    setRequest();
                 } else {
                     promptCheckFields();
                 }
@@ -340,6 +412,7 @@ public class ExerciseFragment extends Fragment {
                 } else if (!spinnerAdapter.getNames()[0].equals("Choice")) {
                     exercise_spin.setSelection(position);
                 }
+                spinner_position = position;
 
             }
 

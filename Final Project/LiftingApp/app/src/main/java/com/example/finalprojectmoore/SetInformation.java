@@ -17,6 +17,14 @@ public class SetInformation {
         this.dateMillis = sqlTimeToMillis();
     }
 
+    public long getDateMillis() {
+        return dateMillis;
+    }
+
+    public int getOneRepMax() {
+        return oneRepMax;
+    }
+
     // Calculate one rep max with Brzycki formula
     private int oneRepMaxBrzycki(int weight, int reps) {
         double oneRepMax = weight / (1.0278 - (0.0278 * reps));

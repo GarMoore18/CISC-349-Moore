@@ -1,6 +1,8 @@
 package com.example.finalprojectmoore;
 
+import android.app.AlertDialog;
 import android.content.ClipData;
+import android.content.DialogInterface;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
@@ -33,6 +35,8 @@ public class MainActivity extends AppCompatActivity {
     private NavController navController;
     private View headerView;
 
+    public int user_id;  // Will be used to get the proper sets for the user
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -60,6 +64,8 @@ public class MainActivity extends AppCompatActivity {
     // Sets the welcome to Hello, <username>!
     private void setWelcomeMessage() {
         Bundle extras = getIntent().getExtras();
+        user_id = extras.getInt(LoginActivity.USERID);
+        Log.d("User ID", String.valueOf(user_id));
         String username = extras.getString(LoginActivity.USERNAME);
         TextView user_welcome = headerView.findViewById(R.id.welcome_user);
         //Log.d("User", String.valueOf(user_welcome));
@@ -108,6 +114,29 @@ public class MainActivity extends AppCompatActivity {
         NavController navController = Navigation.findNavController(this, R.id.nav_host_fragment);
         return NavigationUI.navigateUp(navController, mAppBarConfiguration)
                 || super.onSupportNavigateUp();
+    }
+
+    // This will ask the user to confirm logging out
+    @Override
+    public void onBackPressed() {
+        logoutDialog();
+    }
+
+    public void logoutDialog() {
+        new AlertDialog.Builder(this)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setTitle("Logout")
+                .setMessage("Are you sure you want to logout?")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener()
+                {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        finish();
+                    }
+
+                })
+                .setNegativeButton("No", null)
+                .show();
     }
 
 }

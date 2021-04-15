@@ -3,11 +3,9 @@ package com.example.finalprojectmoore.ui.graphsdisplay;
 import android.graphics.PorterDuff;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
-import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -23,39 +21,63 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+import com.example.finalprojectmoore.CustomRequest;
+import com.example.finalprojectmoore.MainActivity;
 import com.example.finalprojectmoore.R;
+import com.example.finalprojectmoore.SetInformation;
 import com.example.finalprojectmoore.SpinnerAdapter;
 import com.jjoe64.graphview.DefaultLabelFormatter;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.GridLabelRenderer;
 import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
+import com.jjoe64.graphview.series.PointsGraphSeries;
 
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
-import java.security.Timestamp;
+import java.sql.Timestamp;
 import java.text.Format;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class GraphsFragment extends Fragment {
+
+    private static final String url = "http://10.0.0.133:5000/get_set";
 
     private GraphsViewModel graphsViewModel;
     private View root;
     private TextView textView;
     private LinearLayout main_graphs;
 
-    private GraphView max_bench, max_deadlift, max_squat;
+    private GraphView max_bench , max_deadlift, max_squat;
     private GraphView[] graphArray = new GraphView[3];
     private Format data_format = new SimpleDateFormat("MMM-d");
 
+    private ArrayList<SetInformation> data_bench = new ArrayList<>(), data_deadlift = new ArrayList<>(), data_squat = new ArrayList<>();
+    private ArrayList<ArrayList<SetInformation>> data_max = new ArrayList<>();
+
+    /*
     private int[] bench_data = {5, 226, 7, 227, 13, 230};
     private int[] deadlift_data = {5, 444, 7, 245, 11, 123};
-    private int[] sqaut_data = {3, 265, 4, 300, 8, 467};
+    private int[] squat_data = {3, 265, 4, 300, 8, 467};
 
-    private int[][] max_data = {bench_data, deadlift_data, sqaut_data};
+    private int[][] max_data = {bench_data, deadlift_data, squat_data};
+    */
 
     private Spinner exercise_spin;
     private SpinnerAdapter spinnerAdapter;
@@ -68,6 +90,11 @@ public class GraphsFragment extends Fragment {
         root = inflater.inflate(R.layout.graphs_fragment, container, false);
 
         setToolbarIcon();
+
+        // Add arraylist data to main data
+        data_max.add(data_bench);
+        data_max.add(data_deadlift);
+        data_max.add(data_squat);
 
         textView = root.findViewById(R.id.text_graphs);
         textView.setVisibility(View.GONE);  // TODO: Should tell about reps
@@ -106,6 +133,60 @@ public class GraphsFragment extends Fragment {
         // Might need to add a boolean column called valid reps
         //   For the formula reps need to be <= 10
         //   0 would be use data, 1 would be do not use data
+        RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
+
+        // Creating the JSON object to POST to flask
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("user_id", ((MainActivity) getActivity()).user_id);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        CustomRequest customRequest = new CustomRequest(Request.Method.POST, url, jsonObject,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        Log.d("Array", String.valueOf(response));
+                        for (int i = 0; i < response.length(); i++) {
+                            try {
+                                JSONObject full_set = response.getJSONObject(i);
+
+                                // Check to see if it should be graphed (only graph less than 10 reps)
+                                int reps = full_set.getInt("reps");
+                                if (!(reps > 10)) {
+                                    int exercise = full_set.getInt("exercise_id");
+                                    String time_added = full_set.getString("timestamp");
+                                    int weight = full_set.getInt("weight");
+
+                                    SetInformation set = new SetInformation(
+                                            weight,
+                                            reps,
+                                            time_added
+                                    );
+                                    data_max.get(exercise).add(set);  // Add to correct data set
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        createLineSeries();  // Create the series for each graph
+                    }
+                }, new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+                Log.d("Error", String.valueOf(error));
+            }
+        }) {
+            @NonNull
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                final Map<String, String> params = new HashMap<>();
+                params.put("Content-Type", "application/json");  // Need this to talk to Flask
+                return params;
+            }
+        };
+            requestQueue.add(customRequest);   //Add request to the queue
     }
 
     // Sets all graphs visibility to GONE and labels vertical axis
@@ -115,6 +196,11 @@ public class GraphsFragment extends Fragment {
             GridLabelRenderer gridLabel = graphView.getGridLabelRenderer();
             gridLabel.setVerticalAxisTitle("1 Rep Max");
             formatHorizontalAxisLabel(graphView);
+            // TODO: Change graph view (some points are not showing)
+            //graphView.getViewport().setScalable(true);  // activate horizontal zooming and scrolling
+            //graphView.getViewport().setScrollable(true);  // activate horizontal scrolling
+            //graphView.getViewport().setScalableY(true);  // activate horizontal and vertical zooming and scrolling
+            //graphView.getViewport().setScrollableY(true);  // activate vertical scrolling
         }
     }
 
@@ -131,24 +217,27 @@ public class GraphsFragment extends Fragment {
         });
     }
 
-    // TODO: Rework with the volley request
     // Adds corresponding data to graphs
     private void createLineSeries() {
-        for (int g = 0; g < graphArray.length; g++) {
-            int[] curr_data = max_data[g];
-            DataPoint[] values = new DataPoint[curr_data.length / 2];
+        for (int g = 0; g < data_max.size(); g++) {
+            ArrayList<SetInformation> curr_data = data_max.get(g);  // Current exercise
 
-            int values_spot = 0;
-            for (int i = 0; i < curr_data.length; i++) {
-                int weight = curr_data[i];
-                int reps = curr_data[i+1];
-                DataPoint set = new DataPoint(weight, reps);
-                values[values_spot] = set;
-                i++;
-                values_spot++;
+            // If there is data for that exercise
+            if (curr_data.size() > 0) {
+                LineGraphSeries<DataPoint> series = new LineGraphSeries<DataPoint>();
+                PointsGraphSeries<DataPoint> points = new PointsGraphSeries<>();
+
+                // Create a new data point for each set
+                for (int i = 0; i < curr_data.size(); i++) {
+                    long date = curr_data.get(i).getDateMillis();
+                    int one_rep = curr_data.get(i).getOneRepMax();
+                    DataPoint set_point = new DataPoint(date, one_rep);
+                    series.appendData(set_point, true, curr_data.size());
+                    points.appendData(set_point, true, curr_data.size());
+                }
+                graphArray[g].addSeries(series);  // Add the series to that set
+                graphArray[g].addSeries(points);  // Add the series to that set
             }
-            LineGraphSeries<DataPoint> series = new LineGraphSeries<DataPoint>(values);
-            graphArray[g].addSeries(series);
         }
     }
 
@@ -157,21 +246,6 @@ public class GraphsFragment extends Fragment {
         spinnerAdapter = new SpinnerAdapter(getActivity(), exercise_imgs_less, exercise_name_less);
         exercise_spin.setAdapter(spinnerAdapter);
     }
-
-    // Tester to have dates on the x-axis
-    /*
-    private void test() {
-        LineGraphSeries<DataPoint> series = new LineGraphSeries<DataPoint>(new DataPoint[] {
-                new DataPoint(1618275897164L, 125),
-                new DataPoint(86400000+1618275897164L, 75),
-                new DataPoint(172800000+1618275897164L, 234),
-                new DataPoint(259200000+1618275897164L, 45),
-                new DataPoint(345600000+1618275897164L, 463),
-                new DataPoint(432000000+1618275897164L, 88)
-        });
-        Log.d("FATE", String.valueOf(new Date().getTime()));
-        graphArray[0].addSeries(series);
-    } */
 
     ////////////////////////////////////////////////
     ///////////////// MAIN METHODS /////////////////
@@ -183,9 +257,7 @@ public class GraphsFragment extends Fragment {
         graphArray[1] = max_deadlift;
         graphArray[2] = max_squat;
 
-        // TODO: Use volley data to fill the data for the graphs
-        //test();
-        createLineSeries();
+        getSetsRequests();
         setMaxGraphsTraits();
     }
 
