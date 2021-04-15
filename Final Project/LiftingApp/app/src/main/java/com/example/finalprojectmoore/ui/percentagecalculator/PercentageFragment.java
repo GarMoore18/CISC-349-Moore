@@ -32,12 +32,32 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.Volley;
+import com.example.finalprojectmoore.MainActivity;
 import com.example.finalprojectmoore.R;
+import com.example.finalprojectmoore.SetInformation;
 import com.example.finalprojectmoore.SpinnerAdapter;
+import com.google.android.material.snackbar.Snackbar;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.text.DecimalFormat;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 public class PercentageFragment extends Fragment {
+
+    private static final String url = "http://10.0.0.133:5000/get_maxes";
 
     private PercentageViewModel percentageViewModel;
     private View root;
@@ -52,7 +72,7 @@ public class PercentageFragment extends Fragment {
     private final String[] exercise_name_less = {"Bench", "Deadlift", "Squat"};
     private final int[] exercise_imgs_less = {R.drawable.spinner_bench, R.drawable.spinner_deadlift, R.drawable.spinner_squat};
 
-    private int[] max_weight = {205, 275, 260};  // TODO: Fill with maxes from database
+    private int[] max_weight = new int[3];  // TODO: Fill with maxes from database
     private TableRow row;
     private TextView pc, wr, rc;
 
@@ -64,6 +84,8 @@ public class PercentageFragment extends Fragment {
         root = inflater.inflate(R.layout.percentage_fragment, container, false);
 
         setToolbarIcon();
+
+        requestMaxes();
 
         // Find identified views
         textView = root.findViewById(R.id.text_percentage);
@@ -156,7 +178,46 @@ public class PercentageFragment extends Fragment {
     ////////////////////////////////////////////////
     // Volley request the maxes
     private void requestMaxes() {
-        // TODO: Create volley request to fill max_weight (done once on create)
+        RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
+
+        // Creating the volley request
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        for (int i = 0; i < response.length(); i++) {
+                            try {
+                                JSONObject exercise_max = response.getJSONObject(i);
+                                try {
+                                    int exercise_id = exercise_max.getInt("exercise_id");
+                                    int one_rep_max = exercise_max.getInt("1_rep_max");
+                                    max_weight[exercise_id] = one_rep_max;
+                                } catch (JSONException noMax) {
+                                }
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                },
+                new Response.ErrorListener(){
+                    @Override
+                    public void onErrorResponse(VolleyError error){
+                        // Do something when error occurred
+
+                    }
+                }) {
+            @NonNull
+            @Override
+            public Map<String, String> getHeaders() throws AuthFailureError {
+                final Map<String, String> params = new HashMap<>();
+                params.put("Content-Type", "application/json");  // Need this to talk to Flask
+                return params;
+            }
+        };
+
+        requestQueue.add(jsonArrayRequest);   //Add request to the queue
     }
 
     // Watch the weight for a change to recalculate
@@ -219,7 +280,7 @@ public class PercentageFragment extends Fragment {
                     calcSetRows(true);
                 } catch (NumberFormatException notInt) {
                     weight_int = 1;
-                    Log.d("we_int", String.valueOf(weight_int));
+                    //Log.d("we_int", String.valueOf(weight_int));
                     wc.setText(String.valueOf(weight_int));
                     calcSetRows(true);
                 }
@@ -253,14 +314,18 @@ public class PercentageFragment extends Fragment {
         exercise_spin.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                // The spinner has been changed so the max array positions are different
+                                // The spinner has been changed so the max array positions are different
                 if (!spinnerAdapter.getNames()[0].equals("Choice")) {
                     main_percentage.requestFocus();  // Remove focus from edit weight
                     wc.setText("");  // Edit weight text needs reset
                     wc.setHint(getResources().getString(R.string.weight));  // Reset the edit weight hint
-                    Log.d("p", String.valueOf(position));
+                    //Log.d("p", String.valueOf(position));
                     weight_int = max_weight[position];  // This will get the max weight for selected exercise
                     calcSetRows(true);
+
+                    if (weight_int == 0) {
+                        Toast.makeText(getActivity(), "There were no sets recorded for " + exercise_name_less[position], Toast.LENGTH_SHORT).show();
+                    }
                 }
                 // The spinner still contains the choice and is has not been changed from default
                 if (position != 0 && spinnerAdapter.getNames()[0].equals("Choice")) {
@@ -273,6 +338,10 @@ public class PercentageFragment extends Fragment {
 
                     weight_int = max_weight[position-1];
                     calcSetRows(true);
+
+                    if (weight_int == 0) {
+                        Toast.makeText(getActivity(), "There were no sets recorded for " + exercise_name_less[position-1], Toast.LENGTH_SHORT).show();
+                    }
                 }
             }
 

@@ -58,9 +58,10 @@ def addSet():
     exercise = details['exercise_id']
     weight = details['weight']
     reps = details['reps']
+    orm = details['1_rep_max']
 
     cur = mysql.connection.cursor()  # Open connection
-    cur.execute("INSERT INTO sets (user_id, exercise_id, weight, reps) VALUES (%s, %s, %s, %s)", (user, exercise, weight, reps))  # Execute the query
+    cur.execute("INSERT INTO sets (user_id, exercise_id, weight, reps, 1_rep_max) VALUES (%s, %s, %s, %s, %s)", (user, exercise, weight, reps, orm))  # Execute the query
 
     mysql.connection.commit()
 
@@ -80,8 +81,8 @@ def getSet():
 
     cur = mysql.connection.cursor()  # Open connection
 
-    cur.execute("SELECT exercise_id, weight, reps, timestamp FROM sets WHERE user_id = %s ORDER BY timestamp ASC", (user,))  # Execute the query
-
+    cur.execute("SELECT exercise_id, 1_rep_max, timestamp FROM sets WHERE 1_rep_max > -1 AND user_id = %s ORDER BY `timestamp` ASC", (user,))  # Execute the query
+    #cur.execute("SELECT exercise_id, weight, reps, timestamp FROM sets WHERE user_id = %s ORDER BY timestamp ASC", (user,))  # Execute the query
 
     f = '%Y-%m-%d %H:%M:%S'
     results = cur.fetchall()
@@ -93,6 +94,19 @@ def getSet():
     cur.close()  # Close the connection
 
     return jsonify(results)  # Return the JSON of the result
+
+@app.route('/get_maxes', methods=["GET"])
+def getMaxes():
+    cur = mysql.connection.cursor()  # Open connection
+    
+    cur.execute("SELECT exercise_id, MAX(1_rep_max) as '1_rep_max' FROM sets WHERE exercise_id = 0 UNION SELECT exercise_id, MAX(1_rep_max) as '1_rep_max' FROM sets WHERE exercise_id = 1 UNION SELECT exercise_id, MAX(`1_rep_max`) as '1_rep_max' FROM sets WHERE exercise_id = 2")
+
+    results = cur.fetchall()
+
+    cur.close()  # Close the connection
+
+    return jsonify(results)  # Return the JSON of the result
+
 
 if __name__ == '__main__':
     #app.run()   #runs app on local dev server

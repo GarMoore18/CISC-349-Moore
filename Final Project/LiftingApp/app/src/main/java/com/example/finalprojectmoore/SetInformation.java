@@ -3,17 +3,15 @@ package com.example.finalprojectmoore;
 import java.sql.Timestamp;
 
 public class SetInformation {
-    int weight;
-    int reps;
+    int exercise_id;
     String sqlTimestamp;
     int oneRepMax;
     long dateMillis;
 
-    public SetInformation(int weight, int reps, String sqlTimestamp) {
-        this.weight = weight;
-        this.reps = reps;
+    public SetInformation(int exercise_id, String sqlTimestamp, int oneRepMax) {
+        this.exercise_id = exercise_id;
         this.sqlTimestamp = sqlTimestamp;
-        this.oneRepMax = oneRepMaxBrzycki(this.weight, this.reps);
+        this.oneRepMax = oneRepMax;
         this.dateMillis = sqlTimeToMillis();
     }
 
@@ -23,12 +21,6 @@ public class SetInformation {
 
     public int getOneRepMax() {
         return oneRepMax;
-    }
-
-    // Calculate one rep max with Brzycki formula
-    private int oneRepMaxBrzycki(int weight, int reps) {
-        double oneRepMax = weight / (1.0278 - (0.0278 * reps));
-        return (int) Math.round(oneRepMax);
     }
 
     private long sqlTimeToMillis() {

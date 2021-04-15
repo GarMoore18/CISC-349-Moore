@@ -64,7 +64,7 @@ public class ExerciseFragment extends Fragment {
     // For setting the weight toggles
     private Button wp, wm, rp, rm;
     private EditText wc, rc;
-    private int weight_int = 0, rep_int = 0;
+    private int weight_int = 0, rep_int = 0, one_rep_max = -1;
 
     private Button submit;
 
@@ -107,8 +107,17 @@ public class ExerciseFragment extends Fragment {
         return root;
     }
 
+    private int oneRepMaxBrzycki(int weight, int reps) {
+        double oneRepMax = weight / (1.0278 - (0.0278 * reps));
+        return (int) Math.round(oneRepMax);
+    }
+
     private void setRequest() {
         RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
+
+        if (!(rep_int > 10)) {
+            one_rep_max = oneRepMaxBrzycki(weight_int, rep_int);
+        }
 
         // Creating the JSON object to POST to flask
         JSONObject jsonObject = new JSONObject();
@@ -117,6 +126,7 @@ public class ExerciseFragment extends Fragment {
             jsonObject.put("exercise_id", spinner_position);
             jsonObject.put("weight", weight_int);
             jsonObject.put("reps", rep_int);
+            jsonObject.put("1_rep_max", one_rep_max);
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -141,6 +151,7 @@ public class ExerciseFragment extends Fragment {
                         // Display correct message for added boolean
                         if (added) {
                             submitSuccessDialog();
+                            one_rep_max = -1;
                         } else {
                             submitFailureDialog();
                         }

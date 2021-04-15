@@ -152,20 +152,16 @@ public class GraphsFragment extends Fragment {
                             try {
                                 JSONObject full_set = response.getJSONObject(i);
 
-                                // Check to see if it should be graphed (only graph less than 10 reps)
-                                int reps = full_set.getInt("reps");
-                                if (!(reps > 10)) {
-                                    int exercise = full_set.getInt("exercise_id");
-                                    String time_added = full_set.getString("timestamp");
-                                    int weight = full_set.getInt("weight");
+                                int exercise_id = full_set.getInt("exercise_id");
+                                String time_added = full_set.getString("timestamp");
+                                int one_rep_max = full_set.getInt("1_rep_max");
 
-                                    SetInformation set = new SetInformation(
-                                            weight,
-                                            reps,
-                                            time_added
-                                    );
-                                    data_max.get(exercise).add(set);  // Add to correct data set
-                                }
+                                SetInformation set = new SetInformation(
+                                       exercise_id,
+                                       time_added,
+                                       one_rep_max
+                                );
+                                data_max.get(exercise_id).add(set);  // Add to correct data set
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
@@ -186,7 +182,7 @@ public class GraphsFragment extends Fragment {
                 return params;
             }
         };
-            requestQueue.add(customRequest);   //Add request to the queue
+        requestQueue.add(customRequest);   //Add request to the queue
     }
 
     // Sets all graphs visibility to GONE and labels vertical axis
