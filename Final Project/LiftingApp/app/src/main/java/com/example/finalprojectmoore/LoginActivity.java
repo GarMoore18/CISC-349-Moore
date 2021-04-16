@@ -36,7 +36,7 @@ public class LoginActivity extends AppCompatActivity {
     public static final String USERID = "userid_from_db";
     private EditText username, password;
     private String username_txt, password_txt;
-    private Button login_btn;
+    private Button login_btn, register_btn;
 
     private String user_first_name;
     private int user_id;
@@ -50,9 +50,20 @@ public class LoginActivity extends AppCompatActivity {
         username = findViewById(R.id.username);
         password = findViewById(R.id.password);
         login_btn = findViewById(R.id.login);
+        register_btn = findViewById(R.id.register);
 
         loginListener();
 
+    }
+
+    // Register button listener
+    private void registerListener() {
+        register_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // TODO: Move to register activity
+            }
+        });
     }
 
     // Login button listener

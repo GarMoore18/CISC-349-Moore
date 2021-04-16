@@ -1,31 +1,24 @@
 from flask import Flask, request, render_template, abort, jsonify, redirect, url_for
 from flask_mysqldb import MySQL
 import json
-import hashlib, binascii
+import bcrypt
 import datetime
 import os
 
 app = Flask(__name__)   #current module
 
 app.config['MYSQL_HOST'] = 'localhost'
-app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = 'qwerty!123456'
+app.config['MYSQL_USER'] = 'phoneDevFinal'
+app.config['MYSQL_PASSWORD'] = 'phoneDevFinal2021'
 app.config['MYSQL_DB'] = 'lifttracker'
 app.config['MYSQL_CURSORCLASS'] = 'DictCursor'
 
 mysql = MySQL(app)
 
-"""def hashed_pass(password):
-    salt = os.urandom(32)
-    key = hashlib.pbkdf2_hmac(
-                'sha256', # The hash digest algorithm for HMAC
-                password.encode('utf-8'), # Convert the password to bytes
-                salt, # Provide the salt
-                100000 # It is recommended to use at least 100,000 iterations of SHA-256 
-                )
-
-    storage = binascii.hexlify(key + salt)
-    return storage"""
+#FOR REGISTERING USERS
+# Create hased password from the provided password
+def hashed_pass(password):
+    return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
 
 @app.route('/')
 def welcome():
@@ -35,21 +28,31 @@ def welcome():
 def login():
     details = request.get_json()
     username = details['username']
-    password = details['password']
+    att_password = details['password']
 
     cur = mysql.connection.cursor()  # Open connection
-    cur.execute("SELECT id FROM login WHERE username = %s and password = %s", (username, password))  # Execute the query
-
-    # If there is a match return the user information
-    if cur.fetchone():
-        cur.execute("SELECT * FROM users WHERE login_id = 1")
-        results = cur.fetchone()
+    cur.execute("SELECT id, password FROM login WHERE username = %s", (username,))  # Attempt to find user
+    
+    # There is a user
+    row = cur.fetchone()
+    if row:
+        # Check the encrypted password from database against attempted password
+        if bcrypt.checkpw(att_password.encode('utf-8'), row['password'].encode('utf-8')):
+            cur.execute("SELECT * FROM users WHERE login_id = 1")
+            results = cur.fetchone()
+        else:
+            results = {}  # Encrypted password and non-encrypted do not match
     else:
         results = {}  # Inform app there is not a user
 
     cur.close()  # Close the connection
 
     return jsonify(results)  # Return the JSON of the result
+
+@app.route('/register', methods=["POST"])
+def register():
+    # Use hashed_pass() here
+    pass
 
 @app.route('/add_set', methods=["POST"])
 def addSet():

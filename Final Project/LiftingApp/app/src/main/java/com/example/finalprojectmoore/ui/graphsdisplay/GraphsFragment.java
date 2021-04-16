@@ -97,7 +97,7 @@ public class GraphsFragment extends Fragment {
         data_max.add(data_squat);
 
         textView = root.findViewById(R.id.text_graphs);
-        textView.setVisibility(View.GONE);  // TODO: Should tell about reps
+        textView.setVisibility(View.GONE);  // GONE, but can use if wanted later
 
         main_graphs = root.findViewById(R.id.main_graphs);
 

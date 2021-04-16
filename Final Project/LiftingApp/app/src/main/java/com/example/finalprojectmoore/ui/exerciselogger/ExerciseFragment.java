@@ -345,7 +345,6 @@ public class ExerciseFragment extends Fragment {
         return !spinnerAdapter.getNames()[0].equals("Choice") && !(weight_int == 0) && !(rep_int == 0);
     }
 
-    // TODO: Call this on success in volley
     private void submitSuccessDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 
@@ -367,7 +366,6 @@ public class ExerciseFragment extends Fragment {
         builder.show();
     }
 
-    // TODO: Call this on volley error
     private void submitFailureDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
 

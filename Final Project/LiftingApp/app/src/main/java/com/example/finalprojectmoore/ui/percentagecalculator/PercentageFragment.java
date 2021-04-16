@@ -72,7 +72,7 @@ public class PercentageFragment extends Fragment {
     private final String[] exercise_name_less = {"Bench", "Deadlift", "Squat"};
     private final int[] exercise_imgs_less = {R.drawable.spinner_bench, R.drawable.spinner_deadlift, R.drawable.spinner_squat};
 
-    private int[] max_weight = new int[3];  // TODO: Fill with maxes from database
+    private int[] max_weight = new int[3];
     private TableRow row;
     private TextView pc, wr, rc;
 
