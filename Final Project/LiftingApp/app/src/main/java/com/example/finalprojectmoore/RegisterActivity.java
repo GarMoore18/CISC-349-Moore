@@ -17,70 +17,60 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.security.PublicKey;
 import java.util.HashMap;
 import java.util.Map;
 
-public class LoginActivity extends AppCompatActivity {
+public class RegisterActivity extends AppCompatActivity {
 
-    private static final String url = "http://10.0.0.133:5000/login";
-    public static final String USERNAME = "username_from_db";
-    public static final String USERID = "userid_from_db";
-    private EditText username, password;
-    private String username_txt, password_txt;
-    private Button login_btn, register_btn;
+    private static final String url = "http://10.0.0.133:5000/register";
 
-    private String user_first_name;
-    private int user_id;
+    private EditText username, password, f_name, l_name;
+    private String username_txt, password_txt, f_name_txt, l_name_txt;
+    private Button submit_btn;
+
+    private int added;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_login);
+        setContentView(R.layout.activity_register);
 
         // Find necessary views
+        f_name = findViewById(R.id.first_name);
+        l_name = findViewById(R.id.last_name);
         username = findViewById(R.id.username);
         password = findViewById(R.id.password);
-        login_btn = findViewById(R.id.login);
-        register_btn = findViewById(R.id.register);
+        submit_btn = findViewById(R.id.register);
 
-        loginListener();
-        registerListener();
-
+        submitListener();
     }
 
-    // Register button listener
-    private void registerListener() {
-        register_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                registerUser();
-                // TODO: Move to register activity
-            }
-        });
+    // Checks for a username and password
+    private boolean allFieldsProvided() {
+        return !username_txt.equals("") && !password_txt.equals("") && !f_name_txt.equals("") && !l_name_txt.equals("");
     }
 
-    // Login button listener
-    private void loginListener() {
-        login_btn.setOnClickListener(new View.OnClickListener() {
+    // Submit button listener
+    private void submitListener() {
+        submit_btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 // Store the entered data
+                f_name_txt = f_name.getText().toString().trim();
+                l_name_txt = l_name.getText().toString().trim();
                 username_txt = username.getText().toString().trim();
                 password_txt = password.getText().toString().trim();
 
                 //Log.d("Testing", username + " " + password);
 
                 if (allFieldsProvided()) {
-                    loginRequest(); // Request database check
+                    registerRequest(); // Request database check
                 } else {
                     promptCheckFields();
                 }
@@ -89,12 +79,14 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     // Search for user in database
-    private void loginRequest() {
+    private void registerRequest() {
         RequestQueue requestQueue = Volley.newRequestQueue(this);
 
         // Creating the JSON object to POST to flask
         JSONObject jsonObject = new JSONObject();
         try {
+            jsonObject.put("f_name", f_name_txt);
+            jsonObject.put("l_name", l_name_txt);
             jsonObject.put("username", username_txt);
             jsonObject.put("password", password_txt);
         } catch (JSONException e) {
@@ -104,26 +96,29 @@ public class LoginActivity extends AppCompatActivity {
         // Creating the volley request
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, jsonObject,
                 new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                //Log.d("Response", String.valueOf(response));
-                //Log.d("Response", String.valueOf(response.length()));
-                if (response.length() > 0) {
-                    try {
-                        user_first_name = response.getString("first_name");
-                        user_id = response.getInt("id");
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        Log.d("Response", String.valueOf(response));
+                        //Log.d("Response", String.valueOf(response.length()));
+
+                        // Get the set added response
+                        try {
+                            added = response.getInt("added");
+                            Log.d("Added", String.valueOf(added));
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+
+                        }
+
+                        // Display correct message for added boolean
+                        if (added == 2) {
+                            registerFailureDialog();
+
+                        } else {
+                            registerSuccessDialog();
+                        }
                     }
-                    loginSuccess(); // Moves to MainActivity
-                    // Reset the text fields once submitted
-                    username.setText("");
-                    password.setText("");
-                } else {
-                    promptCheckCredentials();
-                }
-            }
-        }, new Response.ErrorListener() {
+                }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.d("Error", String.valueOf(error));
@@ -141,22 +136,35 @@ public class LoginActivity extends AppCompatActivity {
         requestQueue.add(jsonObjectRequest);   //Add request to the queue
     }
 
-    // Start main activity
-    private void loginSuccess() {
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.putExtra(USERNAME, user_first_name);
-        intent.putExtra(USERID, user_id);
-        startActivity(intent);
+    private void registerSuccessDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+        builder.setCancelable(false);
+        builder.setTitle("Welcome new user!");
+        builder.setMessage("Thanks for registering! You will now need to login.");
+
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                returnToLogin();
+            }
+        });
+        builder.show();
     }
 
-    private void registerUser() {
-        Intent intent = new Intent(this, RegisterActivity.class);
-        startActivity(intent);
-    }
+    private void registerFailureDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
-    // Checks for a username and password
-    private boolean allFieldsProvided() {
-        return !username_txt.equals("") && !password_txt.equals("");
+        builder.setCancelable(false);
+        builder.setTitle("Username Taken");
+        builder.setMessage("Sorry, another user has already selected that username. Please user another username.");
+
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+            }
+        });
+        builder.show();
     }
 
     // Alert to fill in all of the fields
@@ -164,8 +172,8 @@ public class LoginActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
         builder.setCancelable(false);
-        builder.setTitle("Provide Credentials");
-        builder.setMessage("Please provide both a username and password.");
+        builder.setTitle("Provide Information");
+        builder.setMessage("Please provide all four fields.");
 
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
@@ -175,20 +183,10 @@ public class LoginActivity extends AppCompatActivity {
         builder.show();
     }
 
-    // Alert to check the user credentials
-    private void promptCheckCredentials() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-
-        builder.setCancelable(false);
-        builder.setTitle("Login Invalid");
-        builder.setMessage("The credentials provided do not match any users.");
-
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-            }
-        });
-        builder.show();
+    private void returnToLogin() {
+        Intent intent = new Intent(this, LoginActivity.class);
+        startActivity(intent);
+        finish();
     }
 
 }

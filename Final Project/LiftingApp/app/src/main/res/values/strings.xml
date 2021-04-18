@@ -28,6 +28,12 @@
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
 
+    <!-- RegisterActivity -->
+    <string name="register_title">Register</string>
+    <string name="first_name">First Name</string>
+    <string name="last_name">Last Name</string>
+    <string name="submit">Submit</string>
+
     <!-- Plates Fragment -->
     <string name="plate_type">Plates</string>
     <string name="per_side">Each Side</string>
@@ -51,6 +57,8 @@
     <string name="rep_cap_notify">Set has more than 10 reps.\nThe set will be excluded from 1RM.\n<a href="http://www.weightrainer.net/training/coefficients.html">Brzycki Formula</a></string>
     <string name="add_set_info">*Add exercise, weight, and reps.</string>
     <string name="add_set">Add Set</string>
+    <string name="title_activity_register">RegisterActivity</string>
+    <string name="prompt_email">Email</string>
 
 
 </resources>

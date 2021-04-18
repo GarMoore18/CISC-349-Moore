@@ -1,5 +1,6 @@
 from flask import Flask, request, render_template, abort, jsonify, redirect, url_for
 from flask_mysqldb import MySQL
+import MySQLdb
 import json
 import bcrypt
 import datetime
@@ -17,7 +18,7 @@ mysql = MySQL(app)
 
 #FOR REGISTERING USERS
 # Create hased password from the provided password
-def hashed_pass(password):
+def hashedPass(password):
     return bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
 
 @app.route('/')
@@ -35,10 +36,11 @@ def login():
     
     # There is a user
     row = cur.fetchone()
+    use_id = row['id']
     if row:
         # Check the encrypted password from database against attempted password
         if bcrypt.checkpw(att_password.encode('utf-8'), row['password'].encode('utf-8')):
-            cur.execute("SELECT * FROM users WHERE login_id = 1")
+            cur.execute("SELECT * FROM users WHERE login_id = %s", (use_id,))
             results = cur.fetchone()
         else:
             results = {}  # Encrypted password and non-encrypted do not match
@@ -51,8 +53,39 @@ def login():
 
 @app.route('/register', methods=["POST"])
 def register():
-    # Use hashed_pass() here
-    pass
+    details = request.get_json()
+    username = details['username']
+    provided_pass = details['password']
+
+    hashed_pass = hashedPass(provided_pass)
+
+    # Check for unique username
+    try:
+        cur = mysql.connection.cursor()
+        cur.execute("INSERT INTO login (username, password) VALUES (%s, %s)", (username, hashed_pass))
+
+        mysql.connection.commit()
+
+    except MySQLdb.Error as e:
+        print(e)
+        return jsonify({"added": 2})
+
+    first_name = details['f_name']
+    last_name = details['l_name']
+    login_id = cur.lastrowid
+    print(login_id)
+
+    cur = mysql.connection.cursor()
+    cur.execute("INSERT INTO users (login_id, first_name, last_name) VALUES (%s, %s, %s)", (login_id, first_name, last_name))
+
+    mysql.connection.commit()
+
+    if cur.rowcount > 0:
+        result = {"added": 0} 
+    else:
+        result = {"added": 1} 
+
+    return jsonify(result)  # Return the JSON of the result
 
 @app.route('/add_set', methods=["POST"])
 def addSet():
