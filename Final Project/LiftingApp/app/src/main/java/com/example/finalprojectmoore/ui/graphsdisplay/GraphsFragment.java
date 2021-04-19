@@ -13,6 +13,7 @@ import android.widget.AdapterView;
 import android.widget.LinearLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -38,8 +39,11 @@ import com.jjoe64.graphview.DefaultLabelFormatter;
 import com.jjoe64.graphview.GraphView;
 import com.jjoe64.graphview.GridLabelRenderer;
 import com.jjoe64.graphview.series.DataPoint;
+import com.jjoe64.graphview.series.DataPointInterface;
 import com.jjoe64.graphview.series.LineGraphSeries;
+import com.jjoe64.graphview.series.OnDataPointTapListener;
 import com.jjoe64.graphview.series.PointsGraphSeries;
+import com.jjoe64.graphview.series.Series;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -64,14 +68,17 @@ public class GraphsFragment extends Fragment {
     private TextView textView;
     private LinearLayout main_graphs;
 
+    // Setting the graphs up
     private GraphView max_bench , max_deadlift, max_squat;
     private GraphView[] graphArray = new GraphView[3];
     private Format data_format = new SimpleDateFormat("MMM-d");
+    private Format tap_format = new SimpleDateFormat("MMM d yyyy");
 
+    // Arrays to store corresponding set objects
     private ArrayList<SetInformation> data_bench = new ArrayList<>(), data_deadlift = new ArrayList<>(), data_squat = new ArrayList<>();
     private ArrayList<ArrayList<SetInformation>> data_max = new ArrayList<>();
 
-    /*
+    /* Old test data
     private int[] bench_data = {5, 226, 7, 227, 13, 230};
     private int[] deadlift_data = {5, 444, 7, 245, 11, 123};
     private int[] squat_data = {3, 265, 4, 300, 8, 467};
@@ -79,6 +86,7 @@ public class GraphsFragment extends Fragment {
     private int[][] max_data = {bench_data, deadlift_data, squat_data};
     */
 
+    // Used set the spinners
     private Spinner exercise_spin;
     private SpinnerAdapter spinnerAdapter;
     private final String[] exercise_names = {"Choice", "Bench", "Deadlift", "Squat"};
@@ -120,6 +128,8 @@ public class GraphsFragment extends Fragment {
     ////////////////////////////////////////////////
     //////////////// HELPER METHODS ////////////////
     ////////////////////////////////////////////////
+
+    // Volley request to get all sets for user
     private void getSetsRequests() {
         // Post user id
         // The result will need to be returned:
@@ -192,11 +202,7 @@ public class GraphsFragment extends Fragment {
             GridLabelRenderer gridLabel = graphView.getGridLabelRenderer();
             gridLabel.setVerticalAxisTitle("1 Rep Max");
             formatHorizontalAxisLabel(graphView);
-            // TODO: Change graph view (some points are not showing)
-            //graphView.getViewport().setScalable(true);  // activate horizontal zooming and scrolling
-            //graphView.getViewport().setScrollable(true);  // activate horizontal scrolling
-            //graphView.getViewport().setScalableY(true);  // activate horizontal and vertical zooming and scrolling
-            //graphView.getViewport().setScrollableY(true);  // activate vertical scrolling
+            gridLabel.setNumHorizontalLabels(1);
         }
     }
 
@@ -223,6 +229,8 @@ public class GraphsFragment extends Fragment {
                 LineGraphSeries<DataPoint> series = new LineGraphSeries<DataPoint>();
                 PointsGraphSeries<DataPoint> points = new PointsGraphSeries<>();
 
+                setPointsListener(points);
+
                 // Create a new data point for each set
                 for (int i = 0; i < curr_data.size(); i++) {
                     long date = curr_data.get(i).getDateMillis();
@@ -234,7 +242,27 @@ public class GraphsFragment extends Fragment {
                 graphArray[g].addSeries(series);  // Add the series to that set
                 graphArray[g].addSeries(points);  // Add the series to that set
             }
+            setBounds(g);
         }
+    }
+
+    // Click the data points for more information
+    private void setPointsListener(PointsGraphSeries<DataPoint> points) {
+        points.setOnDataPointTapListener(new OnDataPointTapListener() {
+            @Override
+            public void onTap(Series series, DataPointInterface dataPoint) {
+                String msg = "Calculated max on " + tap_format.format(new Date((long) dataPoint.getX())) + ": " + (int) dataPoint.getY() + " lbs";
+                Toast.makeText(getActivity(), msg, Toast.LENGTH_SHORT).show();
+            }
+        });
+    }
+
+    // Sets the x min and max
+    private void setBounds(int graph) {
+        ArrayList<SetInformation> use = data_max.get(graph);
+        graphArray[graph].getViewport().setXAxisBoundsManual(true);
+        graphArray[graph].getViewport().setMinX(use.get(0).getDateMillis() - 86400000);
+        graphArray[graph].getViewport().setMaxX(use.get(use.size()-1).getDateMillis() + 86400000);
     }
 
     // Initialize the spinner items
@@ -246,6 +274,7 @@ public class GraphsFragment extends Fragment {
     ////////////////////////////////////////////////
     ///////////////// MAIN METHODS /////////////////
     ////////////////////////////////////////////////
+
     // Properly sets the graph array and the visibility
     private void onCreateGraph() {
         // Add graphs to graph array

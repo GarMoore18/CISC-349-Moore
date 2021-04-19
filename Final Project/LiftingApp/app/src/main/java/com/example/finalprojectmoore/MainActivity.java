@@ -61,6 +61,32 @@ public class MainActivity extends AppCompatActivity {
         navBarSetup();
     }
 
+    ////////////////////////////////////////////////
+    //////////////// HELPER METHODS ////////////////
+    ////////////////////////////////////////////////
+
+    // Dialog to logout before logging out
+    public void logoutDialog() {
+        new AlertDialog.Builder(this)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .setTitle("Logout")
+                .setMessage("Are you sure you want to logout?")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener()
+                {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        finish();
+                    }
+
+                })
+                .setNegativeButton("No", null)
+                .show();
+    }
+
+    ////////////////////////////////////////////////
+    ///////////////// MAIN METHODS /////////////////
+    ////////////////////////////////////////////////
+
     // Sets the welcome to Hello, <username>!
     private void setWelcomeMessage() {
         Bundle extras = getIntent().getExtras();
@@ -82,19 +108,6 @@ public class MainActivity extends AppCompatActivity {
         NavigationUI.setupActionBarWithNavController(this, navController, mAppBarConfiguration);
         NavigationUI.setupWithNavController(navigationView, navController);
     }
-
-    /*
-    // On click for floating action
-    private void floatingListener() {
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
-    }
-     */
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -122,21 +135,16 @@ public class MainActivity extends AppCompatActivity {
         logoutDialog();
     }
 
-    public void logoutDialog() {
-        new AlertDialog.Builder(this)
-                .setIcon(android.R.drawable.ic_dialog_alert)
-                .setTitle("Logout")
-                .setMessage("Are you sure you want to logout?")
-                .setPositiveButton("Yes", new DialogInterface.OnClickListener()
-                {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-                        finish();
-                    }
-
-                })
-                .setNegativeButton("No", null)
-                .show();
+    /* Unimplemented floating action button
+    // On click for floating action
+    private void floatingListener() {
+        fab.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
+                        .setAction("Action", null).show();
+            }
+        });
     }
-
+     */
 }

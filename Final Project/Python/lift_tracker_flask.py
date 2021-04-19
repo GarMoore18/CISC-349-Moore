@@ -131,11 +131,13 @@ def getSet():
 
     return jsonify(results)  # Return the JSON of the result
 
-@app.route('/get_maxes', methods=["GET"])
+@app.route('/get_maxes', methods=["POST"])
 def getMaxes():
     cur = mysql.connection.cursor()  # Open connection
+    details = request.get_json()
+    user = details['user_id']
     
-    cur.execute("SELECT exercise_id, MAX(1_rep_max) as '1_rep_max' FROM sets WHERE exercise_id = 0 UNION SELECT exercise_id, MAX(1_rep_max) as '1_rep_max' FROM sets WHERE exercise_id = 1 UNION SELECT exercise_id, MAX(`1_rep_max`) as '1_rep_max' FROM sets WHERE exercise_id = 2")
+    cur.execute("SELECT exercise_id, MAX(1_rep_max) as '1_rep_max' FROM sets WHERE exercise_id = 0 AND user_id = %s UNION SELECT exercise_id, MAX(1_rep_max) as '1_rep_max' FROM sets WHERE exercise_id = 1 AND user_id = %s UNION SELECT exercise_id, MAX(`1_rep_max`) as '1_rep_max' FROM sets WHERE exercise_id = 2 AND user_id = %s", (user, user, user))
 
     results = cur.fetchall()
 

@@ -54,6 +54,7 @@ public class ExerciseFragment extends Fragment {
     private View root;
     private TextView notifyCap;
 
+    // Used set the spinners
     private Spinner exercise_spin;
     private SpinnerAdapter spinnerAdapter;
     private final String[] exercise_names = {"Choice", "Bench", "Deadlift", "Squat"};
@@ -66,6 +67,7 @@ public class ExerciseFragment extends Fragment {
     private EditText wc, rc;
     private int weight_int = 0, rep_int = 0, one_rep_max = -1;
 
+    // Submit data
     private Button submit;
 
     private int spinner_position;
@@ -107,11 +109,17 @@ public class ExerciseFragment extends Fragment {
         return root;
     }
 
+    ////////////////////////////////////////////////
+    //////////////// HELPER METHODS ////////////////
+    ////////////////////////////////////////////////
+
+    // Returns the 1RM using Brzycki formula
     private int oneRepMaxBrzycki(int weight, int reps) {
         double oneRepMax = weight / (1.0278 - (0.0278 * reps));
         return (int) Math.round(oneRepMax);
     }
 
+    // Volley request to add a set
     private void setRequest() {
         RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
 
@@ -174,7 +182,7 @@ public class ExerciseFragment extends Fragment {
         requestQueue.add(jsonObjectRequest);   //Add request to the queue
     }
 
-    // Adds a hyperlink to the
+    // Adds a hyperlink to the formula
     private void setHyperLink() {
         String linkText = "Set has more than 10 reps." +
                 "<br>The set will be excluded from 1RM." +
@@ -183,10 +191,75 @@ public class ExerciseFragment extends Fragment {
         notifyCap.setMovementMethod(LinkMovementMethod.getInstance());
     }
 
+    // Check if the number of reps can be used in the formula
     private boolean checkRepCap() {
         return rep_int > 10;
     }
 
+    // Ensure that all fields were filled
+    private boolean allFieldsProvided() {
+        return !spinnerAdapter.getNames()[0].equals("Choice") && !(weight_int == 0) && !(rep_int == 0);
+    }
+
+    // The set was added
+    private void submitSuccessDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+        builder.setCancelable(false);
+        builder.setTitle("Good lift!");
+        builder.setMessage("The set was added.");
+
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // Reset the fields for the set
+                weight_int = 0;
+                rep_int = 0;
+                wc.setText("");
+                rc.setText("");
+                spinnerSetup();  // Set the original spinner adapter
+            }
+        });
+        builder.show();
+    }
+
+    // The set was not added
+    private void submitFailureDialog() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+        builder.setCancelable(false);
+        builder.setTitle("Bad spot!");
+        builder.setMessage("Sorry, the set was not added.");
+
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+            }
+        });
+        builder.show();
+    }
+
+    // Dialog to help user fill fields
+    private void promptCheckFields() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
+
+        builder.setCancelable(false);
+        builder.setTitle("Confused?");
+        builder.setMessage("Choose an exercise.\nAdd weight more than 0.\nAdd reps more than 0.");
+
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+            }
+        });
+        builder.show();
+    }
+
+    ////////////////////////////////////////////////
+    ///////////////// MAIN METHODS /////////////////
+    ////////////////////////////////////////////////
+
+    // Watch the reps entry to set the weight_int
     private void weightTextWatcher() {
         // Shows the hint when the weight is 0
         wc.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -221,7 +294,7 @@ public class ExerciseFragment extends Fragment {
         });
     }
 
-    // Watch the barbell for a change to recalculate
+    // Watch the reps entry to set the reps_int
     private void repsTextWatcher() {
         // Shows the hint when the barbell weight is 0
         rc.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -328,6 +401,7 @@ public class ExerciseFragment extends Fragment {
         });
     }
 
+    // Click listener for the submit button
     private void submitOnClick() {
         submit.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -339,61 +413,6 @@ public class ExerciseFragment extends Fragment {
                 }
             }
         });
-    }
-
-    private boolean allFieldsProvided() {
-        return !spinnerAdapter.getNames()[0].equals("Choice") && !(weight_int == 0) && !(rep_int == 0);
-    }
-
-    private void submitSuccessDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-
-        builder.setCancelable(false);
-        builder.setTitle("Good lift!");
-        builder.setMessage("The set was added.");
-
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                // Reset the fields for the set
-                weight_int = 0;
-                rep_int = 0;
-                wc.setText("");
-                rc.setText("");
-                spinnerSetup();  // Set the original spinner adapter
-            }
-        });
-        builder.show();
-    }
-
-    private void submitFailureDialog() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-
-        builder.setCancelable(false);
-        builder.setTitle("Bad spot!");
-        builder.setMessage("Sorry, the set was not added.");
-
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-            }
-        });
-        builder.show();
-    }
-
-    private void promptCheckFields() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
-
-        builder.setCancelable(false);
-        builder.setTitle("Confused?");
-        builder.setMessage("Choose an exercise.\nAdd weight more than 0.\nAdd reps more than 0.");
-
-        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-            }
-        });
-        builder.show();
     }
 
     // Initialize the spinner items

@@ -51,6 +51,8 @@
     <string name="weight_per">Weight</string>
     <string name="reps">Reps</string>
     <string name="exer_hold">Exercise</string>
+    <string name="percent_info">One rep max: %1d\n*Calculated weight is rounded</string>
+    <string name="rounded">*Calculated weight is rounded</string>
 
     <!-- Exercise Fragment -->
     <string name="reps_caps">REPS</string>

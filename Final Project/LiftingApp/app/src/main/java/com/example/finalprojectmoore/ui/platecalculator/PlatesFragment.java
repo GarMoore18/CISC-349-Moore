@@ -89,6 +89,7 @@ public class PlatesFragment extends Fragment {
     ////////////////////////////////////////////////
     //////////////// HELPER METHODS ////////////////
     ////////////////////////////////////////////////
+
     // Set total weight table title
     private void setTotWeight() {
         tw = (TextView) tot_weight.getChildAt(0);  // The plate_weight id column
@@ -163,6 +164,7 @@ public class PlatesFragment extends Fragment {
     ////////////////////////////////////////////////
     ///////////////// MAIN METHODS /////////////////
     ////////////////////////////////////////////////
+
     // Watch the weight for a change to recalculate
     private void weightTextWatcher() {
         // Shows the hint when the weight is 0

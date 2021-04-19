@@ -1,6 +1,10 @@
 package com.example.finalprojectmoore;
 
+import android.text.format.DateUtils;
+import android.util.Log;
+
 import java.sql.Timestamp;
+import java.util.Date;
 
 public class SetInformation {
     int exercise_id;
@@ -15,14 +19,17 @@ public class SetInformation {
         this.dateMillis = sqlTimeToMillis();
     }
 
+    // Return the converted sqlTime
     public long getDateMillis() {
         return dateMillis;
     }
 
+    // Return the rep max for the set
     public int getOneRepMax() {
         return oneRepMax;
     }
 
+    // Convert the sql time to milliseconds for the graph
     private long sqlTimeToMillis() {
         Timestamp sqlValue = Timestamp.valueOf(this.sqlTimestamp);
         return sqlValue.getTime();

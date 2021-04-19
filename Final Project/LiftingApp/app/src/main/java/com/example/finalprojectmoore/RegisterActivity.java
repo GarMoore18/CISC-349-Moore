@@ -51,31 +51,13 @@ public class RegisterActivity extends AppCompatActivity {
         submitListener();
     }
 
+    ////////////////////////////////////////////////
+    //////////////// HELPER METHODS ////////////////
+    ////////////////////////////////////////////////
+
     // Checks for a username and password
     private boolean allFieldsProvided() {
         return !username_txt.equals("") && !password_txt.equals("") && !f_name_txt.equals("") && !l_name_txt.equals("");
-    }
-
-    // Submit button listener
-    private void submitListener() {
-        submit_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Store the entered data
-                f_name_txt = f_name.getText().toString().trim();
-                l_name_txt = l_name.getText().toString().trim();
-                username_txt = username.getText().toString().trim();
-                password_txt = password.getText().toString().trim();
-
-                //Log.d("Testing", username + " " + password);
-
-                if (allFieldsProvided()) {
-                    registerRequest(); // Request database check
-                } else {
-                    promptCheckFields();
-                }
-            }
-        });
     }
 
     // Search for user in database
@@ -136,6 +118,7 @@ public class RegisterActivity extends AppCompatActivity {
         requestQueue.add(jsonObjectRequest);   //Add request to the queue
     }
 
+    // Dialog for successful register
     private void registerSuccessDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
@@ -152,6 +135,7 @@ public class RegisterActivity extends AppCompatActivity {
         builder.show();
     }
 
+    // Dialog for failed register
     private void registerFailureDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
 
@@ -183,10 +167,38 @@ public class RegisterActivity extends AppCompatActivity {
         builder.show();
     }
 
+    // Return to login and do not allow back button
     private void returnToLogin() {
         Intent intent = new Intent(this, LoginActivity.class);
         startActivity(intent);
         finish();
     }
+
+    ////////////////////////////////////////////////
+    ///////////////// MAIN METHODS /////////////////
+    ////////////////////////////////////////////////
+
+    // Submit button listener
+    private void submitListener() {
+        submit_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Store the entered data
+                f_name_txt = f_name.getText().toString().trim();
+                l_name_txt = l_name.getText().toString().trim();
+                username_txt = username.getText().toString().trim();
+                password_txt = password.getText().toString().trim();
+
+                //Log.d("Testing", username + " " + password);
+
+                if (allFieldsProvided()) {
+                    registerRequest(); // Request database check
+                } else {
+                    promptCheckFields();
+                }
+            }
+        });
+    }
+
 
 }

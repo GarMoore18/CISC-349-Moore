@@ -40,6 +40,7 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
+import com.example.finalprojectmoore.CustomRequest;
 import com.example.finalprojectmoore.MainActivity;
 import com.example.finalprojectmoore.R;
 import com.example.finalprojectmoore.SetInformation;
@@ -65,6 +66,7 @@ public class PercentageFragment extends Fragment {
     private TableLayout percent_table;
     private LinearLayout main_percentage;
 
+    // Used set the spinners
     private Spinner exercise_spin;
     private SpinnerAdapter spinnerAdapter;
     private final String[] exercise_names = {"Choice", "Bench", "Deadlift", "Squat"};
@@ -72,6 +74,7 @@ public class PercentageFragment extends Fragment {
     private final String[] exercise_name_less = {"Bench", "Deadlift", "Squat"};
     private final int[] exercise_imgs_less = {R.drawable.spinner_bench, R.drawable.spinner_deadlift, R.drawable.spinner_squat};
 
+    // Store max data for exercises
     private int[] max_weight = new int[3];
     private TableRow row;
     private TextView pc, wr, rc;
@@ -118,6 +121,7 @@ public class PercentageFragment extends Fragment {
     ////////////////////////////////////////////////
     //////////////// HELPER METHODS ////////////////
     ////////////////////////////////////////////////
+
     // Adds static percent and reps
     private void setStaticTable() {
         double top_per = 95;  // Change top percent to get lower or higher percent column
@@ -176,12 +180,21 @@ public class PercentageFragment extends Fragment {
     ////////////////////////////////////////////////
     ///////////////// MAIN METHODS /////////////////
     ////////////////////////////////////////////////
+
     // Volley request the maxes
     private void requestMaxes() {
         RequestQueue requestQueue = Volley.newRequestQueue(getActivity());
 
+        // Creating the JSON object to POST to flask
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject.put("user_id", ((MainActivity) getActivity()).user_id);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
         // Creating the volley request
-        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(Request.Method.GET, url, null,
+        CustomRequest customRequest = new CustomRequest(Request.Method.POST, url, jsonObject,
                 new Response.Listener<JSONArray>() {
                     @Override
                     public void onResponse(JSONArray response) {
@@ -217,7 +230,7 @@ public class PercentageFragment extends Fragment {
             }
         };
 
-        requestQueue.add(jsonArrayRequest);   //Add request to the queue
+        requestQueue.add(customRequest);   //Add request to the queue
     }
 
     // Watch the weight for a change to recalculate
@@ -255,6 +268,7 @@ public class PercentageFragment extends Fragment {
                     //Log.d("hey_int", String.valueOf(weight_int));
                     calcSetRows(true);
                     wc.setHint("");
+                    textView.setText(String.format(getResources().getString(R.string.percent_info), weight_int));
                 } catch (NumberFormatException notInt) {
                     weight_int = 0;
                     //Log.d("ENTERED?", String.valueOf(notInt));
@@ -326,6 +340,7 @@ public class PercentageFragment extends Fragment {
                     if (weight_int == 0) {
                         Toast.makeText(getActivity(), "There were no sets recorded for " + exercise_name_less[position], Toast.LENGTH_SHORT).show();
                     }
+                    textView.setText(String.format(getResources().getString(R.string.percent_info), weight_int));
                 }
                 // The spinner still contains the choice and is has not been changed from default
                 if (position != 0 && spinnerAdapter.getNames()[0].equals("Choice")) {
@@ -342,6 +357,7 @@ public class PercentageFragment extends Fragment {
                     if (weight_int == 0) {
                         Toast.makeText(getActivity(), "There were no sets recorded for " + exercise_name_less[position-1], Toast.LENGTH_SHORT).show();
                     }
+                    textView.setText(String.format(getResources().getString(R.string.percent_info), weight_int));
                 }
             }
 

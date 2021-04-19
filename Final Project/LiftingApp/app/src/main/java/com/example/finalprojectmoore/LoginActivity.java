@@ -57,36 +57,9 @@ public class LoginActivity extends AppCompatActivity {
 
     }
 
-    // Register button listener
-    private void registerListener() {
-        register_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                registerUser();
-                // TODO: Move to register activity
-            }
-        });
-    }
-
-    // Login button listener
-    private void loginListener() {
-        login_btn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Store the entered data
-                username_txt = username.getText().toString().trim();
-                password_txt = password.getText().toString().trim();
-
-                //Log.d("Testing", username + " " + password);
-
-                if (allFieldsProvided()) {
-                    loginRequest(); // Request database check
-                } else {
-                    promptCheckFields();
-                }
-            }
-        });
-    }
+    ////////////////////////////////////////////////
+    //////////////// HELPER METHODS ////////////////
+    ////////////////////////////////////////////////
 
     // Search for user in database
     private void loginRequest() {
@@ -104,26 +77,26 @@ public class LoginActivity extends AppCompatActivity {
         // Creating the volley request
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.POST, url, jsonObject,
                 new Response.Listener<JSONObject>() {
-            @Override
-            public void onResponse(JSONObject response) {
-                //Log.d("Response", String.valueOf(response));
-                //Log.d("Response", String.valueOf(response.length()));
-                if (response.length() > 0) {
-                    try {
-                        user_first_name = response.getString("first_name");
-                        user_id = response.getInt("id");
-                    } catch (JSONException e) {
-                        e.printStackTrace();
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        //Log.d("Response", String.valueOf(response));
+                        //Log.d("Response", String.valueOf(response.length()));
+                        if (response.length() > 0) {
+                            try {
+                                user_first_name = response.getString("first_name");
+                                user_id = response.getInt("id");
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                            loginSuccess(); // Moves to MainActivity
+                            // Reset the text fields once submitted
+                            username.setText("");
+                            password.setText("");
+                        } else {
+                            promptCheckCredentials();
+                        }
                     }
-                    loginSuccess(); // Moves to MainActivity
-                    // Reset the text fields once submitted
-                    username.setText("");
-                    password.setText("");
-                } else {
-                    promptCheckCredentials();
-                }
-            }
-        }, new Response.ErrorListener() {
+                }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
                 Log.d("Error", String.valueOf(error));
@@ -149,6 +122,7 @@ public class LoginActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
+    // Start register user activity
     private void registerUser() {
         Intent intent = new Intent(this, RegisterActivity.class);
         startActivity(intent);
@@ -191,4 +165,38 @@ public class LoginActivity extends AppCompatActivity {
         builder.show();
     }
 
+    ////////////////////////////////////////////////
+    ///////////////// MAIN METHODS /////////////////
+    ////////////////////////////////////////////////
+
+    // Register button listener
+    private void registerListener() {
+        register_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                registerUser();
+                // TODO: Move to register activity
+            }
+        });
+    }
+
+    // Login button listener
+    private void loginListener() {
+        login_btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Store the entered data
+                username_txt = username.getText().toString().trim();
+                password_txt = password.getText().toString().trim();
+
+                //Log.d("Testing", username + " " + password);
+
+                if (allFieldsProvided()) {
+                    loginRequest(); // Request database check
+                } else {
+                    promptCheckFields();
+                }
+            }
+        });
+    }
 }
