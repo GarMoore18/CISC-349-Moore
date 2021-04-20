@@ -141,7 +141,7 @@ public class RegisterActivity extends AppCompatActivity {
 
         builder.setCancelable(false);
         builder.setTitle("Username Taken");
-        builder.setMessage("Sorry, another user has already selected that username. Please user another username.");
+        builder.setMessage("Sorry, another user has already selected that username. Please use another username.");
 
         builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
             @Override
