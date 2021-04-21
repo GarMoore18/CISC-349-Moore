@@ -52,6 +52,7 @@ import org.json.JSONObject;
 import java.sql.Timestamp;
 import java.text.Format;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -261,8 +262,14 @@ public class GraphsFragment extends Fragment {
     private void setBounds(int graph) {
         ArrayList<SetInformation> use = data_max.get(graph);
         graphArray[graph].getViewport().setXAxisBoundsManual(true);
-        graphArray[graph].getViewport().setMinX(use.get(0).getDateMillis() - 86400000);
-        graphArray[graph].getViewport().setMaxX(use.get(use.size()-1).getDateMillis() + 86400000);
+        // If there are not any sets, the date is just today
+        try {
+            graphArray[graph].getViewport().setMinX(use.get(0).getDateMillis() - 86400000);
+            graphArray[graph].getViewport().setMaxX(use.get(use.size()-1).getDateMillis() + 86400000);
+        } catch (IndexOutOfBoundsException e) {
+            graphArray[graph].getViewport().setMinX(System.currentTimeMillis());
+            graphArray[graph].getViewport().setMaxX(System.currentTimeMillis());
+        }
     }
 
     // Initialize the spinner items

@@ -67,7 +67,6 @@ def register():
         mysql.connection.commit()
 
     except MySQLdb.Error as e:
-        print(e)
         return jsonify({"added": 2})
 
     first_name = details['f_name']
